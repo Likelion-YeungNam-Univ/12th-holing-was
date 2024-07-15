@@ -35,7 +35,7 @@ jobs:
 
       # 5. Docker 이미지 빌드
       - name: docker image build
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/project-backend .
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/holing-was .
 
       # 6. DockerHub 로그인
       - name: docker login
@@ -46,7 +46,7 @@ jobs:
 
       # 7. Docker Hub 이미지 푸시
       - name: docker Hub push
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/project-backend
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/holing-was
 
       # 8. EC2 pull
       - name: Deploy
