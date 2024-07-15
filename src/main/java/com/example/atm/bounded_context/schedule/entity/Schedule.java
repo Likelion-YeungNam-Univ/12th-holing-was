@@ -1,5 +1,6 @@
 package com.example.atm.bounded_context.schedule.entity;
 
+import com.example.atm.bounded_context.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -25,4 +26,6 @@ public class Schedule {
     @Column(nullable = false)
     private LocalDateTime finishAt;
 
+    @ManyToOne
+    User user;
 }
