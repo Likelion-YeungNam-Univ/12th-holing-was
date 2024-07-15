@@ -57,5 +57,6 @@ jobs:
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
+            docker stop holing-was-container
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/holing-was
-            docker run -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/holing-was
+            docker run -d -p 8080:8080 --name holing-was-container ${{ secrets.DOCKERHUB_USERNAME }}/holing-was
