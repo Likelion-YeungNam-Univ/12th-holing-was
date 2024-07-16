@@ -7,9 +7,11 @@ import com.example.atm.bounded_context.auth.service.OAuthService;
 import com.example.atm.bounded_context.user.dto.UserInfoDto;
 import com.example.atm.bounded_context.user.entity.User;
 import com.example.atm.bounded_context.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -78,5 +80,26 @@ public class AuthController {
 
         UserInfoDto response = UserInfoDto.fromEntity(user);
         return ResponseEntity.ok().headers(headers).body(response);
+    }
+
+    /**
+     * 회원 탈퇴: 회원 아이디로 회원탈퇴를 진행합니다<br>
+     * 인증 서버의 아이디로 인증 서버와의 연결을 끊고 데이터베이스에 레코드를 지웁니다.
+     *
+     * @param userId 회원 아이디
+     * @return
+     * @throws HttpClientErrorException 연결 끊기 api 요청 실패 시 발생합니다.
+     * @throws IllegalArgumentException 회원이 조회되지 않는 경우 발생합니다.
+     */
+    @DeleteMapping("/withdrawal")
+    public ResponseEntity<String> withdrawal(HttpServletRequest request) {
+        String accessToken = jwtProvider.getToken(request);
+        String userId = jwtProvider.getUserId(accessToken);
+
+        User user = userService.read(Long.parseLong(userId));
+        oAuthService.unlink(user.getSocialId());
+        userService.delete(user);
+
+        return ResponseEntity.ok().body("회원 탈퇴에 성공했습니다.");
     }
 }
