@@ -14,12 +14,27 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @RequiredArgsConstructor
 public class KakaoOAuthService implements OAuthService{
 
     private final KakaoProperties kakaoProperties;
+
+    /**
+     * 인가 코드 요청 uri 생성 : 인가 코드를 요청하는 uri 를 생성하여 반환합니다.<br>
+     * @return uri
+     */
+    @Override
+    public String getAuthorizeUri() {
+        return UriComponentsBuilder.fromHttpUrl(kakaoProperties.getAuthorizationUri())
+                .queryParam("response_type", "code")
+                .queryParam("client_id", kakaoProperties.getClientId())
+                .queryParam("redirect_uri", kakaoProperties.getRedirectUri())
+                .queryParam("scope", kakaoProperties.getScope())
+                .toUriString();
+    }
 
     /**
      * 토큰 받기 : 인가 코드로 토큰 발급을 요청합니다.<br>

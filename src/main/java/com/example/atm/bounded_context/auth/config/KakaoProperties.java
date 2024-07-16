@@ -18,5 +18,5 @@ public class KakaoProperties {
     private String clientSecret;
     private String adminKey;
     private String redirectUri;
-    private List<String> scope;
+    private String scope;
 }
