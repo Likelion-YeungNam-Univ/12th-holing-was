@@ -1,7 +1,13 @@
 package com.example.atm.bounded_context.user.entity;
 
+import com.example.atm.bounded_context.auth.dto.OAuthUserInfoDto;
 import com.example.atm.bounded_context.schedule.entity.Schedule;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,7 +44,7 @@ public class User implements UserDetails {
     private String profileImgUrl;
 
     private Gender gender;
-    
+
     private Integer point;
 
     @Builder
@@ -49,6 +55,14 @@ public class User implements UserDetails {
         this.profileImgUrl = profileImgUrl;
         this.gender = gender;
         this.point = point;
+    }
+
+    public static User fromEntity(OAuthUserInfoDto dto) {
+        return User.builder()
+                .email(dto.email())
+                .nickname(dto.nickname())
+                .profileImgUrl(dto.profileImageUrl())
+                .build();
     }
 
     public User update(String nickname, String profileImgUrl, Gender gender) {
