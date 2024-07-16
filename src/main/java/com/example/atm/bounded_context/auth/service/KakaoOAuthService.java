@@ -5,10 +5,7 @@ import com.example.atm.bounded_context.auth.dto.TokenInfoDto;
 import com.example.atm.bounded_context.auth.dto.UserInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -40,7 +37,7 @@ public class KakaoOAuthService implements OAuthService{
      * 토큰 받기 : 인가 코드로 토큰 발급을 요청합니다.<br>
      * https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#request-token
      * @param code 인가 코드
-     * @return TokenInfoDto 발급된 토큰
+     * @return TokenInfoDto 토큰 정보
      * @throws HttpClientErrorException api 요청 실패 시 발생합니다.
      */
     @Override
@@ -58,7 +55,7 @@ public class KakaoOAuthService implements OAuthService{
         params.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(kakaoProperties.getTokenUri(), entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(kakaoProperties.getTokenUri(), HttpMethod.POST, entity, String.class);
 
         JSONObject tokenInfoJson = new JSONObject(response.getBody());
         String accessToken = tokenInfoJson.getString("access_token");
@@ -68,9 +65,30 @@ public class KakaoOAuthService implements OAuthService{
         return TokenInfoDto.of(accessToken, refreshToken, scope);
     }
 
+    /**
+     * 사용자 정보 받기 : 현재 로그인한 사용자의 정보를 불러옵니다.<br>
+     * https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info
+     * @param accessToken 소셜 인증 서버 access token
+     * @return UserInfoDto 유저 정보
+     * @throws HttpClientErrorException api 요청 실패 시 발생합니다.
+     */
     @Override
     public UserInfoDto getUserInfo(String accessToken) {
-        return null;
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(kakaoProperties.getUserInfoUri(), HttpMethod.GET, entity, String.class);
+
+        JSONObject userInfoJson = new JSONObject(response.getBody());
+        Long id = userInfoJson.getLong("id");
+        String email = userInfoJson.getJSONObject("kakao_account").getString("email");
+        String nickname = userInfoJson.getJSONObject("kakao_account").getJSONObject("profile").getString("nickname");;
+        String profileImageUrl = userInfoJson.getJSONObject("kakao_account").getJSONObject("profile").getString("profile_image_url");;
+
+        return UserInfoDto.of(id, nickname, email, profileImageUrl);
     }
 
     @Override
