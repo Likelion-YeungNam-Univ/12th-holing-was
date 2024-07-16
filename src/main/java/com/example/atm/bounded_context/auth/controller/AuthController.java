@@ -1,10 +1,17 @@
 package com.example.atm.bounded_context.auth.controller;
 
+import com.example.atm.base.jwt.JwtProvider;
 import com.example.atm.bounded_context.auth.dto.OAuthTokenInfoDto;
+import com.example.atm.bounded_context.auth.dto.OAuthUserInfoDto;
 import com.example.atm.bounded_context.auth.service.OAuthService;
+import com.example.atm.bounded_context.user.dto.UserInfoDto;
+import com.example.atm.bounded_context.user.entity.User;
+import com.example.atm.bounded_context.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +24,8 @@ import org.springframework.web.servlet.view.RedirectView;
 public class AuthController {
 
     private final OAuthService oAuthService;
+    private final UserService userService;
+    private final JwtProvider jwtProvider;
 
     /**
      * 인증 코드 받기 요청: 소셜 로그인으로 인가 코드를 받을 수 있는 링크로 리다이렉션 합니다.<br>
@@ -44,5 +53,25 @@ public class AuthController {
     public ResponseEntity<OAuthTokenInfoDto> token(@RequestParam("code") String code) {
         OAuthTokenInfoDto token = oAuthService.getToken(code);
         return ResponseEntity.ok().body(token);
+    }
+
+    /**
+     * 회원가입 및 로그인:
+     *
+     * @param request access token 이 포함된 객체
+     * @return UserInfoDto 유저 정보
+     * @throws HttpClientErrorException api 요청 실패 시 발생합니다.
+     */
+    @GetMapping("/signIn")
+    public ResponseEntity<UserInfoDto> signIn(@RequestBody OAuthTokenInfoDto request) {
+        OAuthUserInfoDto userInfo = oAuthService.getUserInfo(request.accessToken());
+        User user = userService.saveOrUpdate(User.fromEntity(userInfo));
+
+        String accessToken = jwtProvider.generatorAccessToken(user.getEmail(), user.getId());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+
+        UserInfoDto response = UserInfoDto.fromEntity(user);
+        return ResponseEntity.ok().headers(headers).body(response);
     }
 }
