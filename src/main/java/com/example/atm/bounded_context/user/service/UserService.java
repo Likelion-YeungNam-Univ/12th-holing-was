@@ -30,4 +30,9 @@ public class UserService {
                 .map(entity -> entity.update(user.getNickname(), user.getProfileImgUrl(), user.getGender()))
                 .orElseGet(() -> userRepository.save(user));
     }
+
+    @Transactional
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
 }
