@@ -1,31 +1,54 @@
 package com.example.atm.bounded_context.schedule.entity;
 
 import com.example.atm.bounded_context.user.entity.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Schedule {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = true)
-    private String place;
-
-    @Column(nullable = false)
-    private LocalDateTime startAt;
-
-    @Column(nullable = false)
-    private LocalDateTime finishAt;
 
     @ManyToOne
     User user;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false)
+    private String title;
+    @Column(nullable = true)
+    private String place;
+    @Column(nullable = false)
+    private LocalDateTime startAt;
+    @Column(nullable = false)
+    private LocalDateTime finishAt;
+
+    @Builder
+    public Schedule(String title, String place, LocalDateTime startAt, LocalDateTime finishAt) {
+        this.title = title;
+        this.place = place;
+        this.startAt = startAt;
+        this.finishAt = finishAt;
+    }
+
+    public void update(String title, String place, LocalDateTime startAt, LocalDateTime finishAt) {
+        this.title = title;
+        this.place = place;
+        this.startAt = startAt;
+        this.finishAt = finishAt;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 }
