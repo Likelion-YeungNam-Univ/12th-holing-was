@@ -4,8 +4,8 @@ public record TokenInfoDto(
         String accessToken,
         String refreshToken,
         String scope
-){
-    public static TokenInfoDto of(String accessToken, String refreshToken, String scope){
+) {
+    public static TokenInfoDto of(String accessToken, String refreshToken, String scope) {
         return new TokenInfoDto(accessToken, refreshToken, scope);
     }
 }

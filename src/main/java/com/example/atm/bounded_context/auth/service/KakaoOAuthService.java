@@ -5,7 +5,11 @@ import com.example.atm.bounded_context.auth.dto.TokenInfoDto;
 import com.example.atm.bounded_context.auth.dto.UserInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -15,12 +19,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @RequiredArgsConstructor
-public class KakaoOAuthService implements OAuthService{
+public class KakaoOAuthService implements OAuthService {
 
     private final KakaoProperties kakaoProperties;
 
     /**
      * 인가 코드 요청 uri 생성 : 인가 코드를 요청하는 uri 를 생성하여 반환합니다.<br>
+     *
      * @return uri
      */
     @Override
@@ -36,6 +41,7 @@ public class KakaoOAuthService implements OAuthService{
     /**
      * 토큰 받기 : 인가 코드로 토큰 발급을 요청합니다.<br>
      * https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#request-token
+     *
      * @param code 인가 코드
      * @return TokenInfoDto 토큰 정보
      * @throws HttpClientErrorException api 요청 실패 시 발생합니다.
@@ -68,6 +74,7 @@ public class KakaoOAuthService implements OAuthService{
     /**
      * 사용자 정보 받기 : 현재 로그인한 사용자의 정보를 불러옵니다.<br>
      * https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info
+     *
      * @param accessToken 소셜 인증 서버 access token
      * @return UserInfoDto 유저 정보
      * @throws HttpClientErrorException api 요청 실패 시 발생합니다.
@@ -85,8 +92,8 @@ public class KakaoOAuthService implements OAuthService{
         JSONObject userInfoJson = new JSONObject(response.getBody());
         Long id = userInfoJson.getLong("id");
         String email = userInfoJson.getJSONObject("kakao_account").getString("email");
-        String nickname = userInfoJson.getJSONObject("kakao_account").getJSONObject("profile").getString("nickname");;
-        String profileImageUrl = userInfoJson.getJSONObject("kakao_account").getJSONObject("profile").getString("profile_image_url");;
+        String nickname = userInfoJson.getJSONObject("kakao_account").getJSONObject("profile").getString("nickname");
+        String profileImageUrl = userInfoJson.getJSONObject("kakao_account").getJSONObject("profile").getString("profile_image_url");
 
         return UserInfoDto.of(id, nickname, email, profileImageUrl);
     }
