@@ -1,6 +1,6 @@
 package com.example.atm.bounded_context.auth.controller;
 
-import com.example.atm.bounded_context.auth.dto.TokenInfoDto;
+import com.example.atm.bounded_context.auth.dto.OAuthTokenInfoDto;
 import com.example.atm.bounded_context.auth.service.OAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ public class AuthController {
     private final OAuthService oAuthService;
 
     /**
-     * 인증 코드 받기 요청 : 소셜 로그인으로 인가 코드를 받을 수 있는 링크로 리다이렉션 합니다.<br>
+     * 인증 코드 받기 요청: 소셜 로그인으로 인가 코드를 받을 수 있는 링크로 리다이렉션 합니다.<br>
      * 인가 코드 받기 요청의 응답은 HTTP 302 리다이렉트되어, redirect_uri에 GET 요청으로 전달됩니다.<br>
      * https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#request-code
      *
@@ -41,8 +41,8 @@ public class AuthController {
      * @throws HttpClientErrorException api 요청 실패 시 발생합니다.
      */
     @GetMapping("/token")
-    public ResponseEntity<TokenInfoDto> token(@RequestParam("code") String code) {
-        TokenInfoDto token = oAuthService.getToken(code);
+    public ResponseEntity<OAuthTokenInfoDto> token(@RequestParam("code") String code) {
+        OAuthTokenInfoDto token = oAuthService.getToken(code);
         return ResponseEntity.ok().body(token);
     }
 }
