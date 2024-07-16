@@ -9,10 +9,17 @@ public record UserInfoDto(
         String nickname,
         String profileImgUrl,
         Gender gender,
-        Integer point
+        Integer point,
+        Long socialId
 ) {
     public static UserInfoDto fromEntity(User user) {
         return new UserInfoDto(
-                user.getId(), user.getEmail(), user.getNickname(), user.getProfileImgUrl(), user.getGender(), user.getPoint());
+                user.getId(),
+                user.getEmail(),
+                user.getNickname(),
+                user.getProfileImgUrl(),
+                user.getGender(),
+                user.getPoint(),
+                user.getSocialId());
     }
 }

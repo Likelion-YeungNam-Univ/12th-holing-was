@@ -47,14 +47,17 @@ public class User implements UserDetails {
 
     private Integer point;
 
+    private Long socialId;
+
     @Builder
-    public User(String email, String password, String nickname, String profileImgUrl, Gender gender, Integer point) {
+    public User(String email, String password, String nickname, String profileImgUrl, Gender gender, Integer point, Long socialId) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.profileImgUrl = profileImgUrl;
         this.gender = gender;
         this.point = point;
+        this.socialId = socialId;
     }
 
     public static User fromEntity(OAuthUserInfoDto dto) {
@@ -62,6 +65,7 @@ public class User implements UserDetails {
                 .email(dto.email())
                 .nickname(dto.nickname())
                 .profileImgUrl(dto.profileImageUrl())
+                .socialId(dto.id())
                 .build();
     }
 
