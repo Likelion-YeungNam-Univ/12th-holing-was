@@ -98,8 +98,26 @@ public class KakaoOAuthService implements OAuthService {
         return OAuthUserInfoDto.of(id, nickname, email, profileImageUrl);
     }
 
+    /**
+     * 연결 끊기 : 앱과 사용자 카카오계정의 연결을 끊는 기능입니다.(서비스 앱 어드민 키 방식)<br>
+     * https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#unlink-request-admin-key
+     *
+     * @param socialId
+     * @throws HttpClientErrorException api 요청 실패 시 발생합니다.
+     */
     @Override
-    public void unlink(String socialId) {
+    public void unlink(Long socialId) {
+        RestTemplate restTemplate = new RestTemplate();
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.set("Authorization", "KakaoAK " + kakaoProperties.getAdminKey());
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("target_id_type", "user_id");
+        params.add("target_id", socialId.toString());
+
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
+        restTemplate.postForEntity(kakaoProperties.getUnlinkUri(), entity, String.class);
     }
 }

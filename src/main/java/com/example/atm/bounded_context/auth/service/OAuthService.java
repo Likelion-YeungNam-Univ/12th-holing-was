@@ -10,5 +10,5 @@ public interface OAuthService {
 
     OAuthUserInfoDto getUserInfo(String accessToken);
 
-    void unlink(String socialId);
+    void unlink(Long socialId);
 }
