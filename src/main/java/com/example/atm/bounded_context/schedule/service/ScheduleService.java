@@ -4,14 +4,17 @@ import com.example.atm.bounded_context.schedule.dto.ScheduleRequestDto;
 import com.example.atm.bounded_context.schedule.dto.ScheduleResponseDto;
 import com.example.atm.bounded_context.schedule.entity.Schedule;
 import com.example.atm.bounded_context.schedule.repository.ScheduleRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ScheduleService {
 
     @Autowired
@@ -19,27 +22,34 @@ public class ScheduleService {
 
     /**
      * 일정 등록
-     * @param 일정 dto
+     *
+     * @param scheduleRequestDto
      */
     public ScheduleResponseDto create(ScheduleRequestDto scheduleRequestDto) {
-        LocalDateTime startAt = scheduleRequestDto.startAt();
-        LocalDateTime finishAt = scheduleRequestDto.finishAt();
 
-        // 시작 날짜가 종료 날짜보다 앞선 경우 or 종료 날짜가 시작 날짜보다 앞선 경우
-        if (startAt.isAfter(finishAt) || finishAt.isBefore(startAt)) {
-            throw new IllegalArgumentException("잘못된 일정입니다.");
-        }
+//        User user = userRepository.findById(scheduleRequestDto.userId())
+//                .orElseThrow(() -> new IllegalArgumentException("일정 생성이 불가능합니다. - 회원이 아님"));
 
+        validate(scheduleRequestDto.startAt(), scheduleRequestDto.finishAt());
         Schedule schedule = scheduleRequestDto.toEntity();
+
+//        schedule.setUser(user);
+        scheduleRepository.save(schedule);
+
         return ScheduleResponseDto.fromEntity(schedule);
     }
 
     /**
      * 오늘 날짜에 등록된 일정 불러오기
-     * @param today
+     *
+     * @param startAt, finishAt
      */
-    public List<Schedule> read(LocalDate today) {
-        return scheduleRepository.findByDateOrderByStartAt(today);
+    public List<ScheduleResponseDto> read(Long userId, LocalDateTime startAt, LocalDateTime finishAt) {
+        List<Schedule> schedules = scheduleRepository.findByIdAndStartAtBetweenOrderByStartAtAsc(userId, startAt, finishAt);
+
+        return schedules.stream()
+                .map(ScheduleResponseDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -49,6 +59,8 @@ public class ScheduleService {
     public ScheduleResponseDto update(Long scheduleId, ScheduleRequestDto scheduleRequestDto) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 일정입니다."));
+
+        validate(scheduleRequestDto.startAt(), scheduleRequestDto.finishAt());
 
         schedule.update(
                 scheduleRequestDto.title(),
@@ -64,10 +76,21 @@ public class ScheduleService {
 
     /**
      * 일정 삭제 - 삭제 버튼을 누를 경우 삭제
+     *
      * @param scheduleId
      */
     public void delete(Long scheduleId) {
         scheduleRepository.deleteById(scheduleId);
     }
 
+    public void validate(LocalDateTime startAt, LocalDateTime finishAt) {
+        // 시작 날짜가 종료 날짜보다 앞선 경우 or 종료 날짜가 시작 날짜보다 앞선 경우
+        try {
+            if (startAt.isAfter(finishAt) || finishAt.isBefore(startAt)) {
+                throw new IllegalArgumentException("잘못된 일정입니다.");
+            }
+        } catch (DateTimeException e) {
+            throw new IllegalArgumentException("잘못된 시간 값이 입력되었습니다.");
+        }
+    }
 }
