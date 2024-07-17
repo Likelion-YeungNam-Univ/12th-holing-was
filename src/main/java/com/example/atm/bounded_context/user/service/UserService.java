@@ -32,6 +32,18 @@ public class UserService {
     }
 
     @Transactional
+    public void connectMate(Long acceptUserId, Long requestUserId) {
+        User user = read(acceptUserId);
+        user.connectMate(read(requestUserId));
+    }
+
+    @Transactional
+    public void disconnectMate(Long acceptUserId, Long requestUserId) {
+        User user = read(acceptUserId);
+        user.disconnectMate(read(requestUserId));
+    }
+
+    @Transactional
     public void delete(User user) {
         userRepository.delete(user);
     }
