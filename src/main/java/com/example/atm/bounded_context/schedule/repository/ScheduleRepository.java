@@ -9,7 +9,5 @@ import java.util.List;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
-//    List<Schedule> findByStartAtOrderByStartAt(LocalDateTime dateTime);
-
     List<Schedule> findByUserIdAndStartAtBetweenOrderByStartAtAsc(Long userId, LocalDateTime startAt, LocalDateTime finishAt);
 }
