@@ -3,6 +3,8 @@ package com.example.atm.bounded_context.user.dto;
 import com.example.atm.bounded_context.user.entity.Gender;
 import com.example.atm.bounded_context.user.entity.User;
 
+import java.util.Optional;
+
 public record UserInfoDto(
         Long id,
         String email,
@@ -10,7 +12,8 @@ public record UserInfoDto(
         String profileImgUrl,
         Gender gender,
         Integer point,
-        Long socialId
+        Long socialId,
+        Long mateId
 ) {
     public static UserInfoDto fromEntity(User user) {
         return new UserInfoDto(
@@ -20,6 +23,10 @@ public record UserInfoDto(
                 user.getProfileImgUrl(),
                 user.getGender(),
                 user.getPoint(),
-                user.getSocialId());
+                user.getSocialId(),
+                Optional.ofNullable(user.getMate())
+                        .map(User::getId)
+                        .orElse(null)
+        );
     }
 }
