@@ -4,6 +4,8 @@ import com.example.atm.bounded_context.schedule.dto.ScheduleRequestDto;
 import com.example.atm.bounded_context.schedule.dto.ScheduleResponseDto;
 import com.example.atm.bounded_context.schedule.entity.Schedule;
 import com.example.atm.bounded_context.schedule.repository.ScheduleRepository;
+import com.example.atm.bounded_context.user.entity.User;
+import com.example.atm.bounded_context.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ public class ScheduleService {
 
     @Autowired
     private ScheduleRepository scheduleRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * 일정 등록
@@ -27,13 +31,15 @@ public class ScheduleService {
      */
     public ScheduleResponseDto create(ScheduleRequestDto scheduleRequestDto) {
 
-//        User user = userRepository.findById(scheduleRequestDto.userId())
-//                .orElseThrow(() -> new IllegalArgumentException("일정 생성이 불가능합니다. - 회원이 아님"));
+        User user = userRepository.findById(scheduleRequestDto.userId())
+                .orElseThrow(() -> new IllegalArgumentException("일정 생성이 불가능합니다. - 회원이 아님"));
 
         validate(scheduleRequestDto.startAt(), scheduleRequestDto.finishAt());
         Schedule schedule = scheduleRequestDto.toEntity();
 
-//        schedule.setUser(user);
+        schedule.setUser(user);
+        user.getSchedules().add(schedule);
+
         scheduleRepository.save(schedule);
 
         return ScheduleResponseDto.fromEntity(schedule);
@@ -45,7 +51,7 @@ public class ScheduleService {
      * @param startAt, finishAt
      */
     public List<ScheduleResponseDto> read(Long userId, LocalDateTime startAt, LocalDateTime finishAt) {
-        List<Schedule> schedules = scheduleRepository.findByIdAndStartAtBetweenOrderByStartAtAsc(userId, startAt, finishAt);
+        List<Schedule> schedules = scheduleRepository.findByUserIdAndStartAtBetweenOrderByStartAtAsc(userId, startAt, finishAt);
 
         return schedules.stream()
                 .map(ScheduleResponseDto::fromEntity)
@@ -60,7 +66,13 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 일정입니다."));
 
+        User user = userRepository.findById(scheduleRequestDto.userId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+
         validate(scheduleRequestDto.startAt(), scheduleRequestDto.finishAt());
+
+        // 기존의 스케줄은 삭제
+        user.getSchedules().remove(schedule);
 
         schedule.update(
                 scheduleRequestDto.title(),
@@ -68,6 +80,9 @@ public class ScheduleService {
                 scheduleRequestDto.startAt(),
                 scheduleRequestDto.finishAt()
         );
+
+        // 수정 후 추가
+        user.getSchedules().add(schedule);
 
         scheduleRepository.save(schedule);
 
@@ -80,6 +95,13 @@ public class ScheduleService {
      * @param scheduleId
      */
     public void delete(Long scheduleId) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new IllegalArgumentException("이미 삭제된 일정입니다."));
+
+        User user = userRepository.findById(schedule.getUser().getId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다"));
+
+        user.getSchedules().remove(schedule);
         scheduleRepository.deleteById(scheduleId);
     }
 
