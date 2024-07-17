@@ -58,7 +58,7 @@ public class ScheduleController {
      * @param scheduleRequestDto - 수정된 일정 사항
      */
     @PutMapping("/{scheduleId}")
-    public ResponseEntity<?> updateSchedule(@RequestParam Long scheduleId, @RequestBody ScheduleRequestDto scheduleRequestDto) {
+    public ResponseEntity<?> updateSchedule(@PathVariable Long scheduleId, @RequestBody ScheduleRequestDto scheduleRequestDto) {
         try {
             return ResponseEntity.ok(scheduleService.update(scheduleId, scheduleRequestDto));
         } catch (Exception e) {
@@ -72,7 +72,7 @@ public class ScheduleController {
      * @param scheduleId
      */
     @DeleteMapping("/{scheduleId}")
-    public ResponseEntity<?> deleteSchedule(@RequestParam Long scheduleId) {
+    public ResponseEntity<?> deleteSchedule(@PathVariable Long scheduleId) {
         scheduleService.delete(scheduleId);
         return ResponseEntity.ok("일정 삭제 완료");
     }
