@@ -72,20 +72,12 @@ public class ScheduleService {
 
         validate(scheduleRequestDto.startAt(), scheduleRequestDto.finishAt());
 
-        // 기존의 스케줄은 삭제
-        user.getSchedules().remove(schedule);
-
         schedule.update(
                 scheduleRequestDto.title(),
                 scheduleRequestDto.place(),
                 scheduleRequestDto.startAt(),
                 scheduleRequestDto.finishAt()
         );
-
-        // 수정 후 추가
-        user.getSchedules().add(schedule);
-
-        scheduleRepository.save(schedule);
 
         return ScheduleResponseDto.fromEntity(schedule);
     }
