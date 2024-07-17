@@ -1,8 +1,8 @@
 package com.example.atm.bounded_context.auth.service;
 
 import com.example.atm.bounded_context.auth.config.KakaoProperties;
-import com.example.atm.bounded_context.auth.dto.TokenInfoDto;
-import com.example.atm.bounded_context.auth.dto.UserInfoDto;
+import com.example.atm.bounded_context.auth.dto.OAuthTokenInfoDto;
+import com.example.atm.bounded_context.auth.dto.OAuthUserInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
@@ -47,7 +47,7 @@ public class KakaoOAuthService implements OAuthService {
      * @throws HttpClientErrorException api 요청 실패 시 발생합니다.
      */
     @Override
-    public TokenInfoDto getToken(String code) {
+    public OAuthTokenInfoDto getToken(String code) {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -68,7 +68,7 @@ public class KakaoOAuthService implements OAuthService {
         String refreshToken = tokenInfoJson.getString("refresh_token");
         String scope = tokenInfoJson.getString("scope");
 
-        return TokenInfoDto.of(accessToken, refreshToken, scope);
+        return OAuthTokenInfoDto.of(accessToken, refreshToken, scope);
     }
 
     /**
@@ -80,7 +80,7 @@ public class KakaoOAuthService implements OAuthService {
      * @throws HttpClientErrorException api 요청 실패 시 발생합니다.
      */
     @Override
-    public UserInfoDto getUserInfo(String accessToken) {
+    public OAuthUserInfoDto getUserInfo(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -95,7 +95,7 @@ public class KakaoOAuthService implements OAuthService {
         String nickname = userInfoJson.getJSONObject("kakao_account").getJSONObject("profile").getString("nickname");
         String profileImageUrl = userInfoJson.getJSONObject("kakao_account").getJSONObject("profile").getString("profile_image_url");
 
-        return UserInfoDto.of(id, nickname, email, profileImageUrl);
+        return OAuthUserInfoDto.of(id, nickname, email, profileImageUrl);
     }
 
     @Override

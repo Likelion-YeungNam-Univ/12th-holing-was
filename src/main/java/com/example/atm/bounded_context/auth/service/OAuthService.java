@@ -1,14 +1,14 @@
 package com.example.atm.bounded_context.auth.service;
 
-import com.example.atm.bounded_context.auth.dto.TokenInfoDto;
-import com.example.atm.bounded_context.auth.dto.UserInfoDto;
+import com.example.atm.bounded_context.auth.dto.OAuthTokenInfoDto;
+import com.example.atm.bounded_context.auth.dto.OAuthUserInfoDto;
 
 public interface OAuthService {
     String getAuthorizeUri();
 
-    TokenInfoDto getToken(String code);
+    OAuthTokenInfoDto getToken(String code);
 
-    UserInfoDto getUserInfo(String accessToken);
+    OAuthUserInfoDto getUserInfo(String accessToken);
 
     void unlink(String socialId);
 }
