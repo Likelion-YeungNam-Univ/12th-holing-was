@@ -8,8 +8,7 @@ public record ScheduleRequestDto(
         String title,
         String place,
         LocalDateTime startAt,
-        LocalDateTime finishAt,
-        Long userId
+        LocalDateTime finishAt
 ) {
     public Schedule toEntity() {
         return Schedule.builder()
