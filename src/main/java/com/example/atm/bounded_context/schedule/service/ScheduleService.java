@@ -21,6 +21,7 @@ public class ScheduleService {
 
     @Autowired
     private ScheduleRepository scheduleRepository;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -29,9 +30,9 @@ public class ScheduleService {
      *
      * @param scheduleRequestDto
      */
-    public ScheduleResponseDto create(ScheduleRequestDto scheduleRequestDto) {
+    public ScheduleResponseDto create(Long userId, ScheduleRequestDto scheduleRequestDto) {
 
-        User user = userRepository.findById(scheduleRequestDto.userId())
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("일정 생성이 불가능합니다. - 회원이 아님"));
 
         validate(scheduleRequestDto.startAt(), scheduleRequestDto.finishAt());
@@ -62,11 +63,11 @@ public class ScheduleService {
      * 일정 수정
      * 기존의 입력사항을 유지한채 일정 항목을 모두 받아서 update
      */
-    public ScheduleResponseDto update(Long scheduleId, ScheduleRequestDto scheduleRequestDto) {
+    public ScheduleResponseDto update(Long userId, Long scheduleId, ScheduleRequestDto scheduleRequestDto) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 일정입니다."));
 
-        User user = userRepository.findById(scheduleRequestDto.userId())
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
         validate(scheduleRequestDto.startAt(), scheduleRequestDto.finishAt());
