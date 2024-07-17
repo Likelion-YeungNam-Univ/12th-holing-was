@@ -1,8 +1,10 @@
 package com.example.atm.bounded_context.schedule.controller;
 
+import com.example.atm.base.jwt.JwtProvider;
 import com.example.atm.bounded_context.schedule.dto.ScheduleRequestDto;
 import com.example.atm.bounded_context.schedule.dto.ScheduleResponseDto;
 import com.example.atm.bounded_context.schedule.service.ScheduleService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,22 +20,27 @@ public class ScheduleController {
     @Autowired
     private ScheduleService scheduleService;
 
+    @Autowired
+    private JwtProvider jwtProvider;
+
     /**
      * 특정 날짜의 일정을 조회
      *
      * @param date
      * @return 해당 날짜의 모든 일정
      */
-    @GetMapping("")
-    public ResponseEntity<?> getDateSchedule(@RequestParam("user") Long userId, @RequestParam("date") String date) {
+    @GetMapping("/schedules")
+    public ResponseEntity<?> getDateSchedule(HttpServletRequest request, @RequestParam("date") String date) {
         try {
+            String accessToken = jwtProvider.getToken(request);
+            String userId = jwtProvider.getUserId(accessToken);
+
             LocalDate selectedDate = LocalDate.parse(date);
-            return new ResponseEntity<>(scheduleService.read(userId, selectedDate.atStartOfDay(), selectedDate.atStartOfDay().plusDays(1)), HttpStatus.OK);
+            return new ResponseEntity<>(scheduleService.read(Long.parseLong(userId), selectedDate.atStartOfDay(), selectedDate.atStartOfDay().plusDays(1)), HttpStatus.OK);
         } catch (DateTimeParseException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
 
     /**
      * 일정 등록
@@ -41,10 +48,14 @@ public class ScheduleController {
      * @param scheduleRequestDto
      * @return
      */
-    @PostMapping("/create")
-    public ResponseEntity<?> createSchedule(@RequestBody ScheduleRequestDto scheduleRequestDto) {
+    @PostMapping("/schedules")
+    public ResponseEntity<?> createSchedule(HttpServletRequest request, @RequestBody ScheduleRequestDto scheduleRequestDto) {
         try {
-            ScheduleResponseDto scheduleResponseDto = scheduleService.create(scheduleRequestDto);
+            String accessToken = jwtProvider.getToken(request);
+            String userId = jwtProvider.getUserId(accessToken);
+
+            ScheduleResponseDto scheduleResponseDto = scheduleService.create(Long.parseLong(userId), scheduleRequestDto);
+
             return ResponseEntity.ok(scheduleResponseDto);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -57,10 +68,13 @@ public class ScheduleController {
      * @param scheduleId
      * @param scheduleRequestDto - 수정된 일정 사항
      */
-    @PutMapping("/{scheduleId}")
-    public ResponseEntity<?> updateSchedule(@PathVariable Long scheduleId, @RequestBody ScheduleRequestDto scheduleRequestDto) {
+    @PutMapping("/schedules/{scheduleId}")
+    public ResponseEntity<?> updateSchedule(HttpServletRequest request, @PathVariable Long scheduleId, @RequestBody ScheduleRequestDto scheduleRequestDto) {
         try {
-            return ResponseEntity.ok(scheduleService.update(scheduleId, scheduleRequestDto));
+            String accessToken = jwtProvider.getToken(request);
+            String userId = jwtProvider.getUserId(accessToken);
+
+            return ResponseEntity.ok(scheduleService.update(Long.parseLong(userId), scheduleId, scheduleRequestDto));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -71,7 +85,7 @@ public class ScheduleController {
      *
      * @param scheduleId
      */
-    @DeleteMapping("/{scheduleId}")
+    @DeleteMapping("/schedules/{scheduleId}")
     public ResponseEntity<?> deleteSchedule(@PathVariable Long scheduleId) {
         scheduleService.delete(scheduleId);
         return ResponseEntity.ok("일정 삭제 완료");
