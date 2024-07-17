@@ -5,6 +5,7 @@ import com.example.atm.bounded_context.schedule.entity.Schedule;
 import java.time.LocalDateTime;
 
 public record ScheduleResponseDto(
+        Long id,
         String title,
         String place,
         LocalDateTime startAt,
@@ -12,6 +13,7 @@ public record ScheduleResponseDto(
 ) {
     public static ScheduleResponseDto fromEntity(Schedule schedule) {
         return new ScheduleResponseDto(
+                schedule.getId(),
                 schedule.getTitle(),
                 schedule.getPlace(),
                 schedule.getStartAt(),
