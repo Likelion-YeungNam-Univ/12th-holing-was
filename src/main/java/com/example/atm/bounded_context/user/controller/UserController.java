@@ -8,8 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -65,7 +65,7 @@ public class UserController {
      * @param socialId
      * @return
      */
-    @PostMapping("/connect/{socialId}")
+    @PatchMapping("/connect/{socialId}")
     public ResponseEntity<String> connectMate(HttpServletRequest request, @PathVariable Long socialId) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
@@ -79,15 +79,14 @@ public class UserController {
      * 짝궁 해제 : 로그인한 사용자와 userId의 짝꿍 관계를 해제합니다.
      *
      * @param request
-     * @param userId
      * @return
      */
-    @PostMapping("/disconnect/{userId}")
-    public ResponseEntity<String> disconnectMate(HttpServletRequest request, @PathVariable Long userId) {
+    @PatchMapping("/disconnect")
+    public ResponseEntity<String> disconnectMate(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String acceptUserId = jwtProvider.getUserId(accessToken);
 
-        userService.disconnectMate(Long.parseLong(acceptUserId), userId);
+        userService.disconnectMate(Long.parseLong(acceptUserId));
 
         return ResponseEntity.ok().body("짝꿍 해제에 성공했습니다.");
     }

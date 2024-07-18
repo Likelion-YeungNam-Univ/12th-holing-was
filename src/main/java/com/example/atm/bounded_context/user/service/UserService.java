@@ -42,14 +42,19 @@ public class UserService {
     @Transactional
     public void connectMate(Long userId, Long socialId) {
         User user = read(userId);
-        if (user.getMate() != null) throw new IllegalArgumentException(user.getMate().getNickname() + "이미 짝꿍이 존재합니다.");
+        if (user.getMate() != null)
+            throw new IllegalArgumentException("본인의 짝꿍이 이미 존재합니다.");
+
+        User mate = findBySocialId(socialId);
+        if (mate.getMate() != null)
+            throw new IllegalArgumentException("대상자 짝꿍이 이미 존재합니다.");
         user.connectMate(findBySocialId(socialId));
     }
 
     @Transactional
-    public void disconnectMate(Long acceptUserId, Long requestUserId) {
-        User user = read(acceptUserId);
-        user.disconnectMate(read(requestUserId));
+    public void disconnectMate(Long userId) {
+        User user = read(userId);
+        user.disconnectMate(read(user.getMate().getId()));
     }
 
     @Transactional
