@@ -54,6 +54,8 @@ public class UserService {
     @Transactional
     public void disconnectMate(Long userId) {
         User user = read(userId);
+        if (user.getMate() == null)
+            throw new IllegalArgumentException("본인의 짝꿍이 존재하지 않습니다.");
         user.disconnectMate(read(user.getMate().getId()));
     }
 

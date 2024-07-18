@@ -27,10 +27,10 @@ public class UserController {
     }
 
     /**
-     * 내 정보 조회 : 애플리케이션 access token(JWT) 로 사용자 정보를 조회합니다.
+     * 사용자 본인 정보 조회 : 사용자가 본인의 정보를 조회하기 위한 메서드입니다.
      *
      * @param request
-     * @return UserInfoDto
+     * @return UserInfoDto 사용자 정보
      */
     @GetMapping("/me")
     ResponseEntity<UserInfoDto> read(HttpServletRequest request) {
@@ -44,10 +44,10 @@ public class UserController {
     }
 
     /**
-     * 사용자 정보 조회 : userId 로 사용자 정보를 조회합니다.
+     * 사용자 정보 조회 : 사용자가 다른 사용자의 정보를 조회하기 위한 메서드입니다.
      *
-     * @param userId
-     * @return
+     * @param userId 대상 사용자 아이디
+     * @return UserInfoDto 사용자 정보
      */
     @GetMapping("/{userId}")
     ResponseEntity<UserInfoDto> read(@PathVariable Long userId) {
@@ -59,11 +59,14 @@ public class UserController {
     }
 
     /**
-     * 짝궁 연결 : 로그인한 사용자와 userId의 관계를 짝꿍으로 연결합니다.
+     * 짝궁 연결 : 사용자가 짝꿍을 연결하기 위한 메서드입니다.
      *
      * @param request
-     * @param socialId
+     * @param socialId 대상 사용자 소셜 아이디
      * @return
+     * @throws IllegalArgumentException 본인의 짝꿍이 이미 존재하는 경우 발생합니다.
+     * @throws IllegalArgumentException 짝꿍 대상자가 존재하지 않는 경우 발생합니다.
+     * @throws IllegalArgumentException 짝꿍 대상자의 짝꿍이 이미 존재하는 경우 발생합니다.
      */
     @PatchMapping("/connect/{socialId}")
     public ResponseEntity<String> connectMate(HttpServletRequest request, @PathVariable Long socialId) {
@@ -76,10 +79,11 @@ public class UserController {
     }
 
     /**
-     * 짝궁 해제 : 로그인한 사용자와 userId의 짝꿍 관계를 해제합니다.
+     * 짝궁 해제 : 사용자의 짝꿍을 해제하기위한 메서드입니다.
      *
      * @param request
      * @return
+     * @throws IllegalArgumentException 본인의 짝꿍이 존재하지 않는 경우 발생합니다.
      */
     @PatchMapping("/disconnect")
     public ResponseEntity<String> disconnectMate(HttpServletRequest request) {
