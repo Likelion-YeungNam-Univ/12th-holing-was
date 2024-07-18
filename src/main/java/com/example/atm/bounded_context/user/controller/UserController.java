@@ -62,15 +62,15 @@ public class UserController {
      * 짝궁 연결 : 로그인한 사용자와 userId의 관계를 짝꿍으로 연결합니다.
      *
      * @param request
-     * @param userId
+     * @param socialId
      * @return
      */
-    @PostMapping("/connect/{userId}")
-    public ResponseEntity<String> connectMate(HttpServletRequest request, @PathVariable Long userId) {
+    @PostMapping("/connect/{socialId}")
+    public ResponseEntity<String> connectMate(HttpServletRequest request, @PathVariable Long socialId) {
         String accessToken = jwtProvider.getToken(request);
-        String acceptUserId = jwtProvider.getUserId(accessToken);
+        String userId = jwtProvider.getUserId(accessToken);
 
-        userService.connectMate(Long.parseLong(acceptUserId), userId);
+        userService.connectMate(Long.parseLong(userId), socialId);
 
         return ResponseEntity.ok().body("짝꿍 연결에 성공했습니다.");
     }
