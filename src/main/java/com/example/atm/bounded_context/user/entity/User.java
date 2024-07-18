@@ -51,7 +51,7 @@ public class User implements UserDetails {
 
     private Long socialId;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private User mate;
 
     @Builder
