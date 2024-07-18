@@ -43,20 +43,20 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
 
-    /**
-     * 사용자 정보 조회 : 사용자가 다른 사용자의 정보를 조회하기 위한 메서드입니다.
-     *
-     * @param userId 대상 사용자 아이디
-     * @return UserInfoDto 사용자 정보
-     */
-    @GetMapping("/{userId}")
-    ResponseEntity<UserInfoDto> read(@PathVariable Long userId) {
-
-        User user = userService.read(userId);
-        UserInfoDto response = UserInfoDto.fromEntity(user);
-
-        return ResponseEntity.ok().body(response);
-    }
+//    /**
+//     * 사용자 정보 조회 : 사용자가 다른 사용자의 정보를 조회하기 위한 메서드입니다.
+//     *
+//     * @param userId 대상 사용자 아이디
+//     * @return UserInfoDto 사용자 정보
+//     */
+//    @GetMapping("/{userId}")
+//    ResponseEntity<UserInfoDto> read(@PathVariable Long userId) {
+//
+//        User user = userService.read(userId);
+//        UserInfoDto response = UserInfoDto.fromEntity(user);
+//
+//        return ResponseEntity.ok().body(response);
+//    }
 
     /**
      * 짝궁 연결 : 사용자가 짝꿍을 연결하기 위한 메서드입니다.
