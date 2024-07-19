@@ -25,7 +25,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public User readBySocialId(Long socialId) {
         return userRepository.findBySocialId(socialId)
-                .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new GlobalException(UserExceptionCode.TARGET_NOT_FOUND));
     }
 
     @Transactional

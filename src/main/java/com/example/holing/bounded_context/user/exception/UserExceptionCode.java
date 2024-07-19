@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 public enum UserExceptionCode implements ExceptionCode {
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 조회할 수 없습니다."),
+    TARGET_NOT_FOUND(HttpStatus.NOT_FOUND, "대상자를 조회할 수 없습니다."),
     MATE_NOT_FOUND(HttpStatus.NOT_FOUND, "짝꿍을 조회할 수 없습니다."),
     USER_MATE_EXISTS(HttpStatus.CONFLICT, "사용자의 짝꿍이 존재합니다."),
     TARGET_MATE_EXISTS(HttpStatus.CONFLICT, "대상자의 짝꿍이 존재합니다.");
