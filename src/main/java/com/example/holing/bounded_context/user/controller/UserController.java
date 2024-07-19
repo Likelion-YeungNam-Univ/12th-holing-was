@@ -2,7 +2,7 @@ package com.example.holing.bounded_context.user.controller;
 
 import com.example.holing.base.jwt.JwtProvider;
 import com.example.holing.bounded_context.user.api.UserApi;
-import com.example.holing.bounded_context.user.dto.UserInfoDto;
+import com.example.holing.bounded_context.user.dto.UserInfoResponseDto;
 import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,12 +24,12 @@ public class UserController implements UserApi {
     }
 
 
-    public ResponseEntity<UserInfoDto> read(HttpServletRequest request) {
+    public ResponseEntity<UserInfoResponseDto> read(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
         User user = userService.read(Long.parseLong(userId));
-        UserInfoDto response = UserInfoDto.fromEntity(user);
+        UserInfoResponseDto response = UserInfoResponseDto.fromEntity(user);
 
         return ResponseEntity.ok().body(response);
     }

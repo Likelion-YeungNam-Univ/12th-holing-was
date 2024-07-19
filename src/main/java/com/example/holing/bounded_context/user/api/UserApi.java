@@ -1,9 +1,7 @@
 package com.example.holing.bounded_context.user.api;
 
-import com.example.holing.bounded_context.user.dto.UserInfoDto;
+import com.example.holing.bounded_context.user.dto.UserInfoResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface UserApi {
 
     @GetMapping("/me")
-    @Operation(summary = "본인 정보 조회", description = "사용자가 본인의 정보를 조회하기 위한 API 입니다", parameters = {
-            @Parameter(name = "Authorization", description = "서비스 access token(JWT)", required = true, in = ParameterIn.HEADER, example = "Bearer ")
-    })
+    @Operation(summary = "본인 정보 조회", description = "사용자가 본인의 정보를 조회하기 위한 API 입니다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "본인 정보 조회 성공"),
             @ApiResponse(responseCode = "404", description = "사용자를 조회할 수 없는 경우",
@@ -32,12 +28,12 @@ public interface UserApi {
                                                                                 {
                                                                                     "timestamp": "2024-07-19T17:56:39.188+00:00",
                                                                                     "name": "USER_NOT_FOUND",
-                                                                                    "cause": "사용자를 조회할 수 없습니다."
+                                                                                    "cause": "사용자를 찾을 수 없습니다."
                                                                                 }
                                     """),
                     }))
     })
-    ResponseEntity<UserInfoDto> read(HttpServletRequest request);
+    ResponseEntity<UserInfoResponseDto> read(HttpServletRequest request);
 
 //    /**
 //     * 사용자 정보 조회 : 사용자가 다른 사용자의 정보를 조회하기 위한 메서드입니다.
@@ -49,9 +45,7 @@ public interface UserApi {
 //    ResponseEntity<UserInfoDto> read(@PathVariable Long userId);
 
     @PatchMapping("/connect/{socialId}")
-    @Operation(summary = "짝꿍 연결", description = "사용자가 대상 사용자와 짝궁으로 연결하기 위한 API 입니다", parameters = {
-            @Parameter(name = "Authorization", description = "서비스 access token(JWT)", required = true, in = ParameterIn.HEADER, example = "Bearer ")
-    })
+    @Operation(summary = "짝꿍 연결", description = "사용자가 대상 사용자와 짝궁으로 연결하기 위한 API 입니다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "짝궁 연결 성공"),
             @ApiResponse(responseCode = "404", description = "사용자 또는 대상 사용자를 조회할 수 없는 경우",
@@ -61,14 +55,14 @@ public interface UserApi {
                                                                                 {
                                                                                     "timestamp": "2024-07-19T17:56:39.188+00:00",
                                                                                     "name": "USER_NOT_FOUND",
-                                                                                    "cause": "사용자를 조회할 수 없습니다."
+                                                                                    "cause": "사용자를 찾을 수 없습니다."
                                                                                 }
                                     """),
                             @ExampleObject(name = "TARGET_NOT_FOUND", value = """
                                                                                 {
                                                                                     "timestamp": "2024-07-19T17:56:39.188+00:00",
                                                                                     "name": "TARGET_NOT_FOUND",
-                                                                                    "cause": "대상 사용자를 조회할 수 없습니다."
+                                                                                    "cause": "대상자를 찾을 수 없습니다."
                                                                                 }
                                     """),
                     })),
@@ -78,14 +72,14 @@ public interface UserApi {
                                                                                 {
                                                                                     "timestamp": "2024-07-19T17:56:39.188+00:00",
                                                                                     "name": "USER_MATE_EXISTS",
-                                                                                    "cause": "사용자의 짝꿍이 존재합니다."
+                                                                                    "cause": "사용자의 짝꿍이 이미 존재합니다."
                                                                                 }
                                     """),
                             @ExampleObject(name = "TARGET_MATE_EXISTS", value = """
                                                                                 {
                                                                                     "timestamp": "2024-07-19T17:56:39.188+00:00",
                                                                                     "name": "TARGET_MATE_EXISTS",
-                                                                                    "cause": "대상자의 짝꿍이 존재합니다."
+                                                                                    "cause": "대상자의 짝꿍이 이미 존재합니다."
                                                                                 }
                                     """),
                     }))
@@ -93,9 +87,7 @@ public interface UserApi {
     ResponseEntity<String> connectMate(HttpServletRequest request, @PathVariable Long socialId);
 
     @PatchMapping("/disconnect")
-    @Operation(summary = "짝꿍 해제", description = "사용자가 기존 짝궁과 연결을 해제하기 위한 API 입니다", parameters = {
-            @Parameter(name = "Authorization", description = "서비스 access token(JWT)", required = true, in = ParameterIn.HEADER, example = "Bearer ")
-    })
+    @Operation(summary = "짝꿍 해제", description = "사용자가 기존 짝궁과 연결을 해제하기 위한 API 입니다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "짝꿍 해제 성공"),
             @ApiResponse(responseCode = "404", description = "사용자 또는 짝꿍을 조회할 수 없을 때 발생합니다.",
@@ -104,14 +96,14 @@ public interface UserApi {
                                                                                 {
                                                                                     "timestamp": "2024-07-19T17:56:39.188+00:00",
                                                                                     "name": "USER_NOT_FOUND",
-                                                                                    "cause": "사용자를 조회할 수 없습니다."
+                                                                                    "cause": "사용자를 찾을 수 없습니다."
                                                                                 }
                                     """),
                             @ExampleObject(name = "MATE_NOT_FOUND", value = """
                                                                                 {
                                                                                     "timestamp": "2024-07-19T17:56:39.188+00:00",
                                                                                     "name": "MATE_NOT_FOUND",
-                                                                                    "cause": "짝꿍을 조회할 수 없습니다."
+                                                                                    "cause": "사용자의 짝꿍을 찾을 수 없습니다."
                                                                                 }
                                     """),
                     })),
