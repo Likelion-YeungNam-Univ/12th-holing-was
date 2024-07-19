@@ -1,4 +1,4 @@
-package com.example.atm.base.security;
+package com.example.atm.base.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
