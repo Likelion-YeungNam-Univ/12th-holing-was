@@ -4,10 +4,12 @@ import com.example.atm.bounded_context.auth.dto.OAuthUserInfoDto;
 import com.example.atm.bounded_context.schedule.entity.Schedule;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +27,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements UserDetails {
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     List<Schedule> schedules = new ArrayList<>();
 
     @Id
@@ -48,6 +50,9 @@ public class User implements UserDetails {
     private Integer point;
 
     private Long socialId;
+
+    @OneToOne
+    private User mate;
 
     @Builder
     public User(String email, String password, String nickname, String profileImgUrl, Gender gender, Integer point, Long socialId) {
@@ -74,6 +79,16 @@ public class User implements UserDetails {
         this.profileImgUrl = profileImgUrl;
         this.gender = gender;
         return this;
+    }
+
+    public void connectMate(User user) {
+        this.mate = user;
+        user.mate = this;
+    }
+
+    public void disconnectMate(User user) {
+        this.mate = null;
+        user.mate = null;
     }
 
     @Override
