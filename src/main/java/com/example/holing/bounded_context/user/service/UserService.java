@@ -31,7 +31,9 @@ public class UserService {
     @Transactional
     public User saveOrUpdate(User user) {
         return userRepository.findByEmail(user.getEmail())
-                .map(entity -> entity.update(user.getNickname(), user.getProfileImgUrl(), user.getGender()))
+                .map(entity -> entity.update(
+                        user.getNickname(),
+                        user.getProfileImgUrl()))
                 .orElseGet(() -> userRepository.save(user));
     }
 
