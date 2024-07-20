@@ -46,12 +46,16 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String profileImgUrl;
 
+    @Column(nullable = false)
     private Gender gender;
 
+    @Column(nullable = false)
     private Boolean isPeriod;
 
+    @Column(nullable = false)
     private Integer point;
 
+    @Column(nullable = false)
     private Long socialId;
 
     @OneToOne
