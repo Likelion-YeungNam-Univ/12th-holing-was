@@ -53,7 +53,7 @@ public class User implements UserDetails {
     private Boolean isPeriod;
 
     @Column(nullable = false)
-    private Integer point;
+    private int point;
 
     @Column(nullable = false)
     private Long socialId;

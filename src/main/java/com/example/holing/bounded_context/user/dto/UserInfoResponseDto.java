@@ -21,7 +21,7 @@ public record UserInfoResponseDto(
         @Schema(description = "월경 정보", example = "false")
         Boolean isPeriod,
         @Schema(description = "유저 포인트", example = "100")
-        Integer point,
+        int point,
         @Schema(description = "소셜 ID", example = "1234567890")
         Long socialId,
         @Schema(description = "짝꿍 ID", example = "2")
