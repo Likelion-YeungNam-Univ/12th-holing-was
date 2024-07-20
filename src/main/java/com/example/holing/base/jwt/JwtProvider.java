@@ -1,5 +1,7 @@
 package com.example.holing.base.jwt;
 
+import com.example.holing.base.exception.GlobalException;
+import com.example.holing.bounded_context.auth.exception.AuthExceptionCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -48,7 +50,7 @@ public class JwtProvider {
      */
     public String getToken(HttpServletRequest request) {
         if (request.getHeader(AUTH_HEADER) == null)
-            throw new IllegalArgumentException("ApiExceptionCode.EMPTY_AUTHORIZATION");
+            throw new GlobalException(AuthExceptionCode.EMPTY_AUTHORIZATION);
         return parseToken(request.getHeader(AUTH_HEADER));
     }
 
@@ -61,7 +63,7 @@ public class JwtProvider {
      */
     public String parseToken(String token) {
         if (!token.startsWith(BEARER))
-            throw new IllegalArgumentException("ApiExceptionCode.EMPTY_BEARER");
+            throw new GlobalException(AuthExceptionCode.MISMATCH_TOKEN_TYPE);
         return token.substring(BEARER.length());
     }
 
