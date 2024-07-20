@@ -3,6 +3,7 @@ package com.example.holing.bounded_context.auth.controller;
 import com.example.holing.base.jwt.JwtProvider;
 import com.example.holing.bounded_context.auth.dto.OAuthTokenInfoDto;
 import com.example.holing.bounded_context.auth.dto.OAuthUserInfoDto;
+import com.example.holing.bounded_context.auth.dto.SignInRequestDto;
 import com.example.holing.bounded_context.auth.service.OAuthService;
 import com.example.holing.bounded_context.user.dto.UserInfoResponseDto;
 import com.example.holing.bounded_context.user.entity.User;
@@ -70,9 +71,9 @@ public class AuthController {
      * @throws HttpClientErrorException 사용자 정보 받기 api 요청 실패 시 발생합니다.
      */
     @PostMapping("/signIn")
-    public ResponseEntity<UserInfoResponseDto> signIn(@RequestBody OAuthTokenInfoDto request) {
+    public ResponseEntity<UserInfoResponseDto> signIn(@RequestBody SignInRequestDto request) {
         OAuthUserInfoDto userInfo = oAuthService.getUserInfo(request.accessToken());
-        User user = userService.saveOrUpdate(User.fromEntity(userInfo));
+        User user = userService.saveOrUpdate(User.of(userInfo, request));
 
         String accessToken = jwtProvider.generatorAccessToken(user.getEmail(), user.getId());
         HttpHeaders headers = new HttpHeaders();
