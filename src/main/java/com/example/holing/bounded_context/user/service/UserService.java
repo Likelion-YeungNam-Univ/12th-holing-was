@@ -1,6 +1,8 @@
 package com.example.holing.bounded_context.user.service;
 
+import com.example.holing.base.exception.GlobalException;
 import com.example.holing.bounded_context.user.entity.User;
+import com.example.holing.bounded_context.user.exception.UserExceptionCode;
 import com.example.holing.bounded_context.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,19 +19,13 @@ public class UserService {
     @Transactional(readOnly = true)
     public User read(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException(userId + ":사용자가 존재하지 않습니다."));
+                .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
-    public User read(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException(email + ":사용자가 존재하지 않습니다."));
-    }
-
-    @Transactional(readOnly = true)
-    public User findBySocialId(Long socialId) {
+    public User readBySocialId(Long socialId) {
         return userRepository.findBySocialId(socialId)
-                .orElseThrow(() -> new IllegalArgumentException(socialId + ":사용자가 존재하지 않습니다."));
+                .orElseThrow(() -> new GlobalException(UserExceptionCode.TARGET_NOT_FOUND));
     }
 
     @Transactional
@@ -43,19 +39,19 @@ public class UserService {
     public void connectMate(Long userId, Long socialId) {
         User user = read(userId);
         if (user.getMate() != null)
-            throw new IllegalArgumentException("본인의 짝꿍이 이미 존재합니다.");
+            throw new GlobalException(UserExceptionCode.USER_MATE_EXISTS);
 
-        User mate = findBySocialId(socialId);
+        User mate = readBySocialId(socialId);
         if (mate.getMate() != null)
-            throw new IllegalArgumentException("대상자 짝꿍이 이미 존재합니다.");
-        user.connectMate(findBySocialId(socialId));
+            throw new GlobalException(UserExceptionCode.TARGET_MATE_EXISTS);
+        user.connectMate(readBySocialId(socialId));
     }
 
     @Transactional
     public void disconnectMate(Long userId) {
         User user = read(userId);
         if (user.getMate() == null)
-            throw new IllegalArgumentException("본인의 짝꿍이 존재하지 않습니다.");
+            throw new GlobalException(UserExceptionCode.MATE_NOT_FOUND);
         user.disconnectMate(read(user.getMate().getId()));
     }
 
