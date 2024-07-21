@@ -1,5 +1,6 @@
 package com.example.holing.bounded_context.missionresult.service;
 
+import com.example.holing.base.exception.GlobalException;
 import com.example.holing.bounded_context.mission.entity.Mission;
 import com.example.holing.bounded_context.mission.repository.MissionRepository;
 import com.example.holing.bounded_context.mission.service.MissionService;
@@ -8,6 +9,7 @@ import com.example.holing.bounded_context.missionresult.entity.MissionResult;
 import com.example.holing.bounded_context.missionresult.entity.MissionState;
 import com.example.holing.bounded_context.missionresult.repository.MissionResultRepository;
 import com.example.holing.bounded_context.user.entity.User;
+import com.example.holing.bounded_context.user.exception.UserExceptionCode;
 import com.example.holing.bounded_context.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,7 @@ public class MissionResultService {
 
     public List<MissionResultResponseDto> create(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> GlobalException(UserException.USER_NOT_FOUND));
+                .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
 
         List<Mission> dailyMission = missionService.getDailyMission(userId);
         List<MissionResult> todayMission = new ArrayList<>();
@@ -52,7 +54,7 @@ public class MissionResultService {
 
     public List<MissionResultResponseDto> read(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> GlobalException(UserException.USER_NOT_FOUND));
+                .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
 
         List<MissionResult> todayMission = missionResultRepository.findByCreateAtAndAndUserId(LocalDate.now(), userId);
 
@@ -64,7 +66,7 @@ public class MissionResultService {
     public MissionResultResponseDto update(Long userId, Long missionResultId) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> GlobalException(UserException.USER_NOT_FOUND));
+                .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
 
         MissionResult missionResult = missionResultRepository.findById(missionResultId).get();
 
