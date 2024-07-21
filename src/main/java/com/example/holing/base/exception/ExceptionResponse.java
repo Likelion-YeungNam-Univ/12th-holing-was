@@ -14,4 +14,12 @@ public record ExceptionResponse(
                 exceptionCode.getCause()
         );
     }
+
+    public static ExceptionResponse fromEntity(String name, Exception e) {
+        return new ExceptionResponse(
+                LocalDateTime.now(),
+                name,
+                e.getMessage()
+        );
+    }
 }

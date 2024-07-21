@@ -1,6 +1,7 @@
 package com.example.holing.bounded_context.user.entity;
 
 import com.example.holing.bounded_context.auth.dto.OAuthUserInfoDto;
+import com.example.holing.bounded_context.auth.dto.SignInRequestDto;
 import com.example.holing.bounded_context.schedule.entity.Schedule;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,39 +46,47 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String profileImgUrl;
 
+    @Column(nullable = false)
     private Gender gender;
 
-    private Integer point;
+    @Column(nullable = false)
+    private Boolean isPeriod;
 
+    @Column(nullable = false)
+    private int point;
+
+    @Column(nullable = false)
     private Long socialId;
 
     @OneToOne
     private User mate;
 
     @Builder
-    public User(String email, String password, String nickname, String profileImgUrl, Gender gender, Integer point, Long socialId) {
+    public User(String email, String password, String nickname, String profileImgUrl, Gender gender, Boolean isPeriod, Integer point, Long socialId) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.profileImgUrl = profileImgUrl;
         this.gender = gender;
-        this.point = point;
+        this.isPeriod = (gender == Gender.FEMALE) ? isPeriod : false;
+        this.point = 0;
         this.socialId = socialId;
     }
 
-    public static User fromEntity(OAuthUserInfoDto dto) {
+    public static User of(OAuthUserInfoDto dto, SignInRequestDto request) {
         return User.builder()
                 .email(dto.email())
                 .nickname(dto.nickname())
                 .profileImgUrl(dto.profileImageUrl())
                 .socialId(dto.id())
+                .gender(request.gender())
+                .isPeriod(request.isPeriod())
                 .build();
     }
 
-    public User update(String nickname, String profileImgUrl, Gender gender) {
+    public User update(String nickname, String profileImgUrl) {
         this.nickname = nickname;
         this.profileImgUrl = profileImgUrl;
-        this.gender = gender;
         return this;
     }
 

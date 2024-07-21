@@ -16,10 +16,12 @@ public record UserInfoResponseDto(
         String nickname,
         @Schema(description = "프로필 이미지 URL", example = "http://example.com/image.jpg")
         String profileImgUrl,
-        @Schema(description = "유저 성별", example = "M")
+        @Schema(description = "유저 성별", example = "MALE")
         Gender gender,
+        @Schema(description = "월경 정보", example = "false")
+        Boolean isPeriod,
         @Schema(description = "유저 포인트", example = "100")
-        Integer point,
+        int point,
         @Schema(description = "소셜 ID", example = "1234567890")
         Long socialId,
         @Schema(description = "짝꿍 ID", example = "2")
@@ -32,6 +34,7 @@ public record UserInfoResponseDto(
                 user.getNickname(),
                 user.getProfileImgUrl(),
                 user.getGender(),
+                user.getIsPeriod(),
                 user.getPoint(),
                 user.getSocialId(),
                 Optional.ofNullable(user.getMate())
