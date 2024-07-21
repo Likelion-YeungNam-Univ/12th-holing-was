@@ -1,2 +1,17 @@
-package com.example.holing.bounded_context.missionresult.dto;public class MissionResultResponseDto {
+package com.example.holing.bounded_context.missionresult.dto;
+
+import com.example.holing.bounded_context.mission.entity.Mission;
+import com.example.holing.bounded_context.missionresult.entity.MissionResult;
+import com.example.holing.bounded_context.missionresult.entity.MissionState;
+
+public record MissionResultResponseDto(
+        MissionState state,
+        Mission mission
+) {
+    public static MissionResultResponseDto fromEntity(MissionResult missionResult) {
+        return new MissionResultResponseDto(
+                missionResult.getState(),
+                missionResult.getMission()
+        );
+    }
 }
