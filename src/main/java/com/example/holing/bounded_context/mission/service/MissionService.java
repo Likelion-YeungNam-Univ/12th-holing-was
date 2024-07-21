@@ -23,7 +23,7 @@ public class MissionService {
     Set<Long> generateRandomNumbers() {
         Random random = new Random();
         Set<Long> missionNumbers = new HashSet<>();
-        int totalMission = missionRepository.countById();
+        int totalMission = missionRepository.countAllBy();
 
         while (missionNumbers.size() < 3) {
             Long number = random.nextLong(totalMission);

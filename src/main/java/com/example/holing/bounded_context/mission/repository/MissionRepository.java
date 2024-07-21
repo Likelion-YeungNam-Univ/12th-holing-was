@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface MissionRepository extends JpaRepository<Mission, Long> {
-    int countById();
+    int countAllBy();
 
     int countByTag(String tag);
 
