@@ -14,7 +14,7 @@ import com.example.holing.bounded_context.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -56,7 +56,7 @@ public class MissionResultService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
 
-        List<MissionResult> todayMission = missionResultRepository.findByCreateAtAndAndUserId(LocalDate.now(), userId);
+        List<MissionResult> todayMission = missionResultRepository.findAllByCreatedAtAndAndUserId(LocalDateTime.now(), userId);
 
         return todayMission.stream()
                 .map(MissionResultResponseDto::fromEntity)
@@ -77,16 +77,19 @@ public class MissionResultService {
 
         // 동일한 태그(주요 증상)명의 미션 개수를 확인
         Mission prevMission = missionResult.getMission();
-        int count = missionRepository.countByTag(prevMission.getTag());
+
+        int count = missionRepository.countAllByTag(prevMission.getTag());
         List<Mission> newMissionList = missionRepository.findAllByTag(prevMission.getTag());
+        System.out.println("해당 태그의 미션 개수" + count);
 
         // 난수 생성을 위한 Random 객체 선언
         Random random = new Random();
 
         // 난수 생성 후 미션 다시 받기 → 중복된 경우 한번더 진행
         while (true) {
-            int temp = random.nextInt() * newMissionList.size();
+            int temp = random.nextInt(count);
             Mission tempMission = newMissionList.get(temp);
+            System.out.println("새로 생성된 미션 id" + temp);
 
             // 임시로 발급한 미션이 기존의 생성된 미션이랑 일치하지 않는 경우 업데이트 후 break
             if (tempMission != prevMission) {
@@ -94,6 +97,8 @@ public class MissionResultService {
                 break;
             }
         }
+
+        missionResultRepository.save(missionResult);
 
         return MissionResultResponseDto.fromEntity(missionResult);
     }

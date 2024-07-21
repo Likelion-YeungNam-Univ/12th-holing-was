@@ -10,7 +10,7 @@ import java.util.List;
 public interface MissionRepository extends JpaRepository<Mission, Long> {
     int countAllBy();
 
-    int countByTag(String tag);
+    int countAllByTag(String tag);
 
     List<Mission> findAllByTag(String tag);
 }

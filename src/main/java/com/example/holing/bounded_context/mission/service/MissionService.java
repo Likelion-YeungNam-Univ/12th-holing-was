@@ -1,7 +1,10 @@
 package com.example.holing.bounded_context.mission.service;
 
+import com.example.holing.base.exception.GlobalException;
 import com.example.holing.bounded_context.mission.entity.Mission;
 import com.example.holing.bounded_context.mission.repository.MissionRepository;
+import com.example.holing.bounded_context.user.entity.User;
+import com.example.holing.bounded_context.user.exception.UserExceptionCode;
 import com.example.holing.bounded_context.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,9 +38,12 @@ public class MissionService {
 
     @Transactional
     public List<Mission> getDailyMission(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
 
         List<Mission> dailyMission = new ArrayList<>();
         Set<Long> missionNumbers = generateRandomNumbers();
+        System.out.println("생성된 미션 id" + missionNumbers);
 
         for (Long id : missionNumbers) {
             Mission mission = missionRepository.findById(id).get();

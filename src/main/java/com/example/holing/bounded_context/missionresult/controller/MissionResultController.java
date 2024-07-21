@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,7 +32,7 @@ public class MissionResultController {
      * @return List<Mission> 생성된 미션 3개
      */
 //    @Scheduled(cron = "0 0 0 * * ?")
-    @PostMapping("")
+    @GetMapping("")
     ResponseEntity<List<MissionResultResponseDto>> create(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
@@ -66,8 +66,8 @@ public class MissionResultController {
      * @param missionResultId
      * @return
      */
-    @PatchMapping("/new")
-    ResponseEntity<MissionResultResponseDto> update(HttpServletRequest request, Long missionResultId) {
+    @PatchMapping("/{missionResultId}")
+    ResponseEntity<MissionResultResponseDto> update(HttpServletRequest request, @PathVariable Long missionResultId) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
