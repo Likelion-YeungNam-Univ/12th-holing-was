@@ -1,7 +1,11 @@
 package com.example.holing.bounded_context.user.entity;
 
 import com.example.holing.bounded_context.auth.dto.OAuthUserInfoDto;
+<<<<<<< HEAD
 import com.example.holing.bounded_context.auth.dto.SignInRequestDto;
+=======
+import com.example.holing.bounded_context.missionresult.entity.MissionResult;
+>>>>>>> e5f0c64 (refact: User Entity & Mission Result 연관 관계 매핑)
 import com.example.holing.bounded_context.schedule.entity.Schedule;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -60,6 +64,9 @@ public class User implements UserDetails {
 
     @OneToOne
     private User mate;
+
+    @OneToMany
+    private List<MissionResult> missionResults;
 
     @Builder
     public User(String email, String password, String nickname, String profileImgUrl, Gender gender, Boolean isPeriod, Integer point, Long socialId) {
