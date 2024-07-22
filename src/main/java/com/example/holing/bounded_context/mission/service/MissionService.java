@@ -43,12 +43,10 @@ public class MissionService {
 
         List<Mission> dailyMission = new ArrayList<>();
         Set<Long> missionNumbers = generateRandomNumbers();
-        System.out.println("생성된 미션 id" + missionNumbers);
 
         for (Long id : missionNumbers) {
             Mission mission = missionRepository.findById(id).get();
             dailyMission.add(mission);
-            missionRepository.save(mission);
         }
 
         return dailyMission;

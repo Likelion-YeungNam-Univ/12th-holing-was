@@ -6,7 +6,6 @@ import com.example.holing.bounded_context.mission.repository.MissionRepository;
 import com.example.holing.bounded_context.mission.service.MissionService;
 import com.example.holing.bounded_context.missionresult.dto.MissionResultResponseDto;
 import com.example.holing.bounded_context.missionresult.entity.MissionResult;
-import com.example.holing.bounded_context.missionresult.entity.MissionState;
 import com.example.holing.bounded_context.missionresult.repository.MissionResultRepository;
 import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.exception.UserExceptionCode;
@@ -43,9 +42,7 @@ public class MissionResultService {
             missionResult.setMission(mission);
             missionResult.setUser(user);
 
-            user.getMissionResults().add(missionResult);
             todayMission.add(missionResult);
-
             missionResultRepository.save(missionResult);
         }
 
@@ -59,7 +56,7 @@ public class MissionResultService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
 
-        List<MissionResult> todayMission = missionResultRepository.findAllByCreatedAtAndAndUserId(LocalDateTime.now(), userId);
+        List<MissionResult> todayMission = missionResultRepository.findAllByCreatedAtAndUserId(LocalDateTime.now(), userId);
 
         return todayMission.stream()
                 .map(MissionResultResponseDto::fromEntity)
@@ -75,7 +72,7 @@ public class MissionResultService {
         MissionResult missionResult = missionResultRepository.findById(missionResultId).get();
 
         // 완료된 미션에 대해서는 새로운 미션 받을 수 없음
-        if (missionResult.getState() == MissionState.COMPLETED) {
+        if (missionResult.isCompleted() == true) {
             throw new IllegalArgumentException("이미 완료된 미션입니다.");
         }
 
@@ -84,7 +81,6 @@ public class MissionResultService {
 
         int count = missionRepository.countAllByTag(prevMission.getTag());
         List<Mission> newMissionList = missionRepository.findAllByTag(prevMission.getTag());
-        System.out.println("해당 태그의 미션 개수" + count);
 
         // 난수 생성을 위한 Random 객체 선언
         Random random = new Random();
@@ -93,7 +89,6 @@ public class MissionResultService {
         while (true) {
             int temp = random.nextInt(count);
             Mission tempMission = newMissionList.get(temp);
-            System.out.println("새로 생성된 미션 id" + temp);
 
             // 임시로 발급한 미션이 기존의 생성된 미션이랑 일치하지 않는 경우 업데이트 후 break
             if (tempMission != prevMission) {

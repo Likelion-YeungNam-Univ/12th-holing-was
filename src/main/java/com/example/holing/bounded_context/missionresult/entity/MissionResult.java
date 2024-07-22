@@ -22,15 +22,7 @@ public class MissionResult extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private MissionState state;
-
-//    @Column(nullable = false)
-//    @CreatedDate
-//    private LocalDate createdAt;
-//
-//    @Column(nullable = false)
-//    @LastModifiedDate
-//    private LocalDate modifiedAt;
+    private boolean isCompleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
@@ -40,11 +32,11 @@ public class MissionResult extends BaseTimeEntity {
 
     @Builder
     public MissionResult() {
-        this.state = MissionState.INCOMPLETED;
+        this.isCompleted = false;
     }
 
-    public void updateState(MissionState state) {
-        this.state = state;
+    public void updateState(boolean isCompleted) {
+        this.isCompleted = isCompleted;
     }
 
     public void setUser(User user) {

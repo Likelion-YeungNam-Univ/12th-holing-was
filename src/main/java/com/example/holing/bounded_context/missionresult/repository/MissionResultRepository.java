@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface MissionResultRepository extends JpaRepository<MissionResult, Long> {
-    List<MissionResult> findAllByCreatedAtAndAndUserId(LocalDateTime createdAt, Long userId);
+    List<MissionResult> findAllByCreatedAtAndUserId(LocalDateTime createdAt, Long userId);
 }
