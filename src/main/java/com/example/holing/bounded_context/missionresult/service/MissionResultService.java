@@ -13,6 +13,7 @@ import com.example.holing.bounded_context.user.exception.UserExceptionCode;
 import com.example.holing.bounded_context.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class MissionResultService {
     private final MissionService missionService;
     private final MissionRepository missionRepository;
 
+    @Transactional
     public List<MissionResultResponseDto> create(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
@@ -52,6 +54,7 @@ public class MissionResultService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<MissionResultResponseDto> read(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
@@ -63,6 +66,7 @@ public class MissionResultService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public MissionResultResponseDto update(Long userId, Long missionResultId) {
 
         User user = userRepository.findById(userId)
@@ -97,8 +101,6 @@ public class MissionResultService {
                 break;
             }
         }
-
-        missionResultRepository.save(missionResult);
 
         return MissionResultResponseDto.fromEntity(missionResult);
     }
