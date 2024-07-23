@@ -39,8 +39,6 @@ public class ScheduleService {
         Schedule schedule = scheduleRequestDto.toEntity();
 
         schedule.setUser(user);
-        user.getSchedules().add(schedule);
-
         scheduleRepository.save(schedule);
 
         return ScheduleResponseDto.fromEntity(schedule);
@@ -74,7 +72,7 @@ public class ScheduleService {
 
         schedule.update(
                 scheduleRequestDto.title(),
-                scheduleRequestDto.place(),
+                scheduleRequestDto.content(),
                 scheduleRequestDto.startAt(),
                 scheduleRequestDto.finishAt()
         );
@@ -94,7 +92,6 @@ public class ScheduleService {
         User user = userRepository.findById(schedule.getUser().getId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다"));
 
-        user.getSchedules().remove(schedule);
         scheduleRepository.deleteById(scheduleId);
     }
 

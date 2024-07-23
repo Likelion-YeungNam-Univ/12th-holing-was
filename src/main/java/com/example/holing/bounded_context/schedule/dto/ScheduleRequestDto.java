@@ -6,14 +6,14 @@ import java.time.LocalDateTime;
 
 public record ScheduleRequestDto(
         String title,
-        String place,
+        String content,
         LocalDateTime startAt,
         LocalDateTime finishAt
 ) {
     public Schedule toEntity() {
         return Schedule.builder()
                 .title(title)
-                .place(place)
+                .content(content)
                 .startAt(startAt)
                 .finishAt(finishAt)
                 .build();

@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public record ScheduleResponseDto(
         Long id,
         String title,
-        String place,
+        String content,
         LocalDateTime startAt,
         LocalDateTime finishAt
 ) {
@@ -15,7 +15,7 @@ public record ScheduleResponseDto(
         return new ScheduleResponseDto(
                 schedule.getId(),
                 schedule.getTitle(),
-                schedule.getPlace(),
+                schedule.getContent(),
                 schedule.getStartAt(),
                 schedule.getFinishAt()
         );
