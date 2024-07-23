@@ -11,9 +11,20 @@ import java.util.Optional;
 
 @Repository
 public interface UserReportRepository extends JpaRepository<UserReport, Long> {
+
+    /**
+     * 사용자의 최신 리포트를 조회하기 위한 쿼리<br>
+     * 리포트 생성 전 최신 리포트의 생성날짜를 조회하기 위한 용도로 사용합니다.
+     *
+     * @param user
+     * @return
+     */
+
+    Optional<UserReport> findFirstByUserOrderByCreatedAtDesc(User user);
+
     /**
      * 사용자의 모든 리포트를 최신순으로 조회하기 위한 쿼리<br>
-     * 리포트 요약에서 리포트와 솔루션을 조회하기 위한 용도로 사용됩니다.
+     * 리포트 요약에서 리포트와 솔루션을 조회하기 위한 용도로 사용합니다.
      *
      * @param user
      * @return
@@ -27,7 +38,7 @@ public interface UserReportRepository extends JpaRepository<UserReport, Long> {
 
     /**
      * 특정 리포트를 조회하기 위한 쿼리<br>
-     * 리포트 상세보기에서 사용자 리포트, 리포트, 솔루션의 정보를 출력하기 위한 용도로 사용됩니다.
+     * 리포트 상세보기에서 사용자 리포트, 리포트, 솔루션의 정보를 출력하기 위한 용도로 사용합니다.
      *
      * @param id
      * @return
