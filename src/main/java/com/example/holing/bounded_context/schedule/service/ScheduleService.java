@@ -57,10 +57,16 @@ public class ScheduleService {
                 .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
 
         List<Schedule> mySchedules = scheduleRepository.findByUserIdAndStartAtBetweenOrderByStartAtAsc(userId, startAt, finishAt);
-        List<Schedule> mateSchedules = scheduleRepository.findByUserIdAndStartAtBetweenOrderByStartAtAsc(user.getMate().getId(), startAt, finishAt);
 
-        mySchedules.addAll(mateSchedules);
+        // 짝꿍이 있는 경우, 짝꿍의 일정도 추가한다.
+        if (user.getMate() != null) {
+            List<Schedule> mateSchedules = scheduleRepository.findByUserIdAndStartAtBetweenOrderByStartAtAsc(user.getMate().getId(), startAt, finishAt);
+            mySchedules.addAll(mateSchedules);
+        }
 
+        if (mySchedules.isEmpty()) {
+            throw new GlobalException(ScheduleExceptionCode.SCHEDULE_NOT_FOUND);
+        }
         return mySchedules.stream()
                 .map(ScheduleResponseDto::fromEntity)
                 .collect(Collectors.toList());
