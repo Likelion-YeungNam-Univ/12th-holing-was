@@ -4,6 +4,7 @@ import com.example.holing.base.exception.GlobalException;
 import com.example.holing.bounded_context.schedule.dto.ScheduleRequestDto;
 import com.example.holing.bounded_context.schedule.dto.ScheduleResponseDto;
 import com.example.holing.bounded_context.schedule.entity.Schedule;
+import com.example.holing.bounded_context.schedule.exception.ScheduleExceptionCode;
 import com.example.holing.bounded_context.schedule.repository.ScheduleRepository;
 import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.exception.UserExceptionCode;
@@ -12,7 +13,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,7 +72,7 @@ public class ScheduleService {
      */
     public ScheduleResponseDto update(Long userId, Long scheduleId, ScheduleRequestDto scheduleRequestDto) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 일정입니다."));
+                .orElseThrow(() -> new GlobalException(ScheduleExceptionCode.SCHEDULE_NOT_FOUND));
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
@@ -96,19 +96,15 @@ public class ScheduleService {
      */
     public void delete(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new IllegalArgumentException("이미 삭제된 일정입니다."));
+                .orElseThrow(() -> new GlobalException(ScheduleExceptionCode.SCHEDULE_NOT_FOUND));
 
         scheduleRepository.deleteById(scheduleId);
     }
 
     public void validate(LocalDateTime startAt, LocalDateTime finishAt) {
         // 시작 날짜가 종료 날짜보다 앞선 경우 or 종료 날짜가 시작 날짜보다 앞선 경우
-        try {
-            if (startAt.isAfter(finishAt) || finishAt.isBefore(startAt)) {
-                throw new IllegalArgumentException("잘못된 일정입니다.");
-            }
-        } catch (DateTimeException e) {
-            throw new IllegalArgumentException("잘못된 시간 값이 입력되었습니다.");
+        if (startAt.isAfter(finishAt) || finishAt.isBefore(startAt)) {
+            throw new GlobalException(ScheduleExceptionCode.INVALID_DATETIME);
         }
     }
 }
