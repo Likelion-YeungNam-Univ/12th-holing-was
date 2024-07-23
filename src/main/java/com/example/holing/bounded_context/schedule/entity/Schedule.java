@@ -24,7 +24,7 @@ public class Schedule {
     private String title;
 
     @Column(nullable = true)
-    private String place;
+    private String content;
 
     @Column(nullable = false)
     private LocalDateTime startAt;
@@ -33,16 +33,16 @@ public class Schedule {
     private LocalDateTime finishAt;
 
     @Builder
-    public Schedule(String title, String place, LocalDateTime startAt, LocalDateTime finishAt) {
+    public Schedule(String title, String content, LocalDateTime startAt, LocalDateTime finishAt) {
         this.title = title;
-        this.place = place;
+        this.content = content;
         this.startAt = startAt;
         this.finishAt = finishAt;
     }
 
-    public void update(String title, String place, LocalDateTime startAt, LocalDateTime finishAt) {
+    public void update(String title, String content, LocalDateTime startAt, LocalDateTime finishAt) {
         this.title = title;
-        this.place = place;
+        this.content = content;
         this.startAt = startAt;
         this.finishAt = finishAt;
     }
