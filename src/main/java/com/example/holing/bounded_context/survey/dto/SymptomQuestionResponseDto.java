@@ -8,7 +8,9 @@ public record SymptomQuestionResponseDto(
         String choice1,
         String choice2,
         String choice3,
-        String tagName
+        String choice4,
+        String tagName,
+        Boolean isAdditional
 ) {
     public static SymptomQuestionResponseDto fromEntity(SymptomQuestion symptomQuestion) {
         return new SymptomQuestionResponseDto(
@@ -17,7 +19,9 @@ public record SymptomQuestionResponseDto(
                 symptomQuestion.getChoice1(),
                 symptomQuestion.getChoice2(),
                 symptomQuestion.getChoice3(),
-                symptomQuestion.getTag().getName()
+                symptomQuestion.getChoice4(),
+                symptomQuestion.getTag().getName(),
+                symptomQuestion.getIsAdditional()
         );
     }
 }
