@@ -8,8 +8,7 @@ import com.example.holing.bounded_context.schedule.entity.Schedule;
 import com.example.holing.bounded_context.schedule.exception.ScheduleExceptionCode;
 import com.example.holing.bounded_context.schedule.repository.ScheduleRepository;
 import com.example.holing.bounded_context.user.entity.User;
-import com.example.holing.bounded_context.user.exception.UserExceptionCode;
-import com.example.holing.bounded_context.user.repository.UserRepository;
+import com.example.holing.bounded_context.user.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,7 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     /**
      * 일정 등록
@@ -39,8 +38,7 @@ public class ScheduleService {
      */
     public ScheduleResponseDto create(Long userId, ScheduleRequestDto scheduleRequestDto) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
+        User user = userService.read(userId);
 
         validate(scheduleRequestDto.startAt(), scheduleRequestDto.finishAt());
         Schedule schedule = scheduleRequestDto.toEntity();
@@ -58,8 +56,7 @@ public class ScheduleService {
      */
     public List<ScheduleResponseDto> read(Long userId, LocalDateTime startAt, LocalDateTime finishAt) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
+        User user = userService.read(userId);
 
         List<Schedule> mySchedules = scheduleRepository.findByUserIdAndStartAtBetweenOrderByStartAtAsc(userId, startAt, finishAt);
 
@@ -79,8 +76,7 @@ public class ScheduleService {
 
     public List<ScheduleCountDto> countSchedules(Long userId, LocalDateTime startAt, LocalDateTime finishAt) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
+        User user = userService.read(userId);
 
         List<Schedule> mySchedules = scheduleRepository.findByUserIdAndStartAtBetweenOrderByStartAtAsc(userId, startAt, finishAt);
 
@@ -116,8 +112,7 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new GlobalException(ScheduleExceptionCode.SCHEDULE_NOT_FOUND));
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
+        User user = userService.read(userId);
 
         validate(scheduleRequestDto.startAt(), scheduleRequestDto.finishAt());
 

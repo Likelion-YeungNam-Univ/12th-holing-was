@@ -47,17 +47,7 @@ public interface ScheduleApi {
     @GetMapping("/schedules/month")
     @Operation(summary = "선택한 날짜가 포함된 월의 모든 일정 개수를 조회", description = "선택된 날짜의 월에 포함된 모든 일정의 개수를 조회합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "모든 일정 개수 카운팅 성공"),
-            @ApiResponse(responseCode = "404", description = "일정 개수 카운팅 실패",
-                    content = @Content(mediaType = "application/json", examples = {
-                            @ExampleObject(value = """
-                                                                                {
-                                                                                    "timeStamp": "2024-07-24T00:30:09.9259602",
-                                                                                    "name": "SCHEDULE_NOT_FOUND",
-                                                                                    "cause": "일정을 찾을 수 없습니다."
-                                                                                }
-                                    """),
-                    }))
+            @ApiResponse(responseCode = "200", description = "모든 일정 개수 카운팅 성공")
     })
     ResponseEntity<List<ScheduleCountDto>> getScheduleCount(HttpServletRequest request, @RequestParam("date") String date);
 
