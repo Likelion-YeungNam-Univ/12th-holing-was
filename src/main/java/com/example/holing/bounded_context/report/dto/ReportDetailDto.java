@@ -5,14 +5,14 @@ import com.example.holing.bounded_context.report.entity.Report;
 public record ReportDetailDto(
         int score,
         String tagName,
-        String content,
+        String additional,
         SolutionDto solution
 ) {
     public static ReportDetailDto fromEntity(Report report) {
         return new ReportDetailDto(
                 report.getScore(),
                 report.getTag().getName(),
-                report.getContent(),
+                report.getAdditional(),
                 SolutionDto.fromEntity(report.getSolution())
         );
     }

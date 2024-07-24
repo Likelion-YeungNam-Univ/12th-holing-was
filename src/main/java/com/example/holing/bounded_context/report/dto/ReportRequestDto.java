@@ -8,7 +8,7 @@ public record ReportRequestDto(
         Long tagId,
         @Min(0) @Max(18)
         int score,
-        String content
+        String additional
 ) {
 
 }

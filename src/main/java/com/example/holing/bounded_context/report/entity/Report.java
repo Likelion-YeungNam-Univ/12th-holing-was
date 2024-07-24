@@ -39,15 +39,15 @@ public class Report {
     @Column(nullable = false)
     private int score;
 
-    private String content;
+    private String additional;
 
     @Builder
-    public Report(Long id, Solution solution, Tag tag, UserReport userReport, int score, String content) {
+    public Report(Long id, Solution solution, Tag tag, UserReport userReport, int score, String additional) {
         this.id = id;
         this.solution = solution;
         this.tag = tag;
         this.userReport = userReport;
         this.score = score;
-        this.content = content;
+        this.additional = additional;
     }
 }

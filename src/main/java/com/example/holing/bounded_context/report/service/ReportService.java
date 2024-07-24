@@ -43,7 +43,7 @@ public class ReportService {
                             .filter(solution -> solution.getMinScore() <= reportRequestDto.score())
                             .min((s1, s2) -> s2.getMinScore() - s1.getMinScore())
                             .get())
-                    .content(reportRequestDto.content())
+                    .additional(reportRequestDto.additional().isEmpty() ? null : reportRequestDto.additional())
                     .build();
 
             return reportRepository.save(report);
