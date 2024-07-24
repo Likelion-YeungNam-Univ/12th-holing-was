@@ -1,29 +1,35 @@
 package com.example.holing.bounded_context.schedule.service;
 
+import com.example.holing.base.exception.GlobalException;
+import com.example.holing.bounded_context.schedule.dto.ScheduleCountDto;
 import com.example.holing.bounded_context.schedule.dto.ScheduleRequestDto;
 import com.example.holing.bounded_context.schedule.dto.ScheduleResponseDto;
 import com.example.holing.bounded_context.schedule.entity.Schedule;
+import com.example.holing.bounded_context.schedule.exception.ScheduleExceptionCode;
 import com.example.holing.bounded_context.schedule.repository.ScheduleRepository;
 import com.example.holing.bounded_context.user.entity.User;
-import com.example.holing.bounded_context.user.repository.UserRepository;
+import com.example.holing.bounded_context.user.service.UserService;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class ScheduleService {
 
-    @Autowired
-    private ScheduleRepository scheduleRepository;
+    private final ScheduleRepository scheduleRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserService userService;
 
     /**
      * 일정 등록
@@ -32,15 +38,12 @@ public class ScheduleService {
      */
     public ScheduleResponseDto create(Long userId, ScheduleRequestDto scheduleRequestDto) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("일정 생성이 불가능합니다. - 회원이 아님"));
+        User user = userService.read(userId);
 
         validate(scheduleRequestDto.startAt(), scheduleRequestDto.finishAt());
         Schedule schedule = scheduleRequestDto.toEntity();
 
         schedule.setUser(user);
-        user.getSchedules().add(schedule);
-
         scheduleRepository.save(schedule);
 
         return ScheduleResponseDto.fromEntity(schedule);
@@ -52,11 +55,53 @@ public class ScheduleService {
      * @param startAt, finishAt
      */
     public List<ScheduleResponseDto> read(Long userId, LocalDateTime startAt, LocalDateTime finishAt) {
-        List<Schedule> schedules = scheduleRepository.findByUserIdAndStartAtBetweenOrderByStartAtAsc(userId, startAt, finishAt);
 
-        return schedules.stream()
+        User user = userService.read(userId);
+
+        List<Schedule> mySchedules = scheduleRepository.findByUserIdAndStartAtBetweenOrderByStartAtAsc(userId, startAt, finishAt);
+
+        // 짝꿍이 있는 경우, 짝꿍의 일정도 추가한다.
+        if (user.getMate() != null) {
+            List<Schedule> mateSchedules = scheduleRepository.findByUserIdAndStartAtBetweenOrderByStartAtAsc(user.getMate().getId(), startAt, finishAt);
+            mySchedules.addAll(mateSchedules);
+        }
+
+        if (mySchedules.isEmpty()) {
+            throw new GlobalException(ScheduleExceptionCode.SCHEDULE_NOT_FOUND);
+        }
+        return mySchedules.stream()
                 .map(ScheduleResponseDto::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    public List<ScheduleCountDto> countSchedules(Long userId, LocalDateTime startAt, LocalDateTime finishAt) {
+
+        User user = userService.read(userId);
+
+        List<Schedule> mySchedules = scheduleRepository.findByUserIdAndStartAtBetweenOrderByStartAtAsc(userId, startAt, finishAt);
+
+        if (user.getMate() != null) {
+            mySchedules.addAll(scheduleRepository.findByUserIdAndStartAtBetweenOrderByStartAtAsc(user.getMate().getId(), startAt, finishAt));
+        }
+
+        Map<LocalDate, Integer> dateCount = new HashMap<>();
+        for (Schedule schedule : mySchedules) {
+            LocalDate startDate = schedule.getStartAt().toLocalDate();
+            LocalDate finishDate = schedule.getFinishAt().toLocalDate();
+
+            for (LocalDate date = startDate; !date.isAfter(finishDate); date = date.plusDays(1)) {
+                dateCount.put(date, dateCount.getOrDefault(date, 0) + 1);
+            }
+        }
+
+        List<ScheduleCountDto> scheduleCountDtos = new ArrayList<>();
+        for (Map.Entry<LocalDate, Integer> entry : dateCount.entrySet()) {
+            scheduleCountDtos.add(new ScheduleCountDto(entry.getKey(), entry.getValue()));
+        }
+
+        scheduleCountDtos.sort(Comparator.comparing(ScheduleCountDto::date));
+
+        return scheduleCountDtos;
     }
 
     /**
@@ -65,16 +110,15 @@ public class ScheduleService {
      */
     public ScheduleResponseDto update(Long userId, Long scheduleId, ScheduleRequestDto scheduleRequestDto) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 일정입니다."));
+                .orElseThrow(() -> new GlobalException(ScheduleExceptionCode.SCHEDULE_NOT_FOUND));
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        User user = userService.read(userId);
 
         validate(scheduleRequestDto.startAt(), scheduleRequestDto.finishAt());
 
         schedule.update(
                 scheduleRequestDto.title(),
-                scheduleRequestDto.place(),
+                scheduleRequestDto.content(),
                 scheduleRequestDto.startAt(),
                 scheduleRequestDto.finishAt()
         );
@@ -89,23 +133,15 @@ public class ScheduleService {
      */
     public void delete(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new IllegalArgumentException("이미 삭제된 일정입니다."));
+                .orElseThrow(() -> new GlobalException(ScheduleExceptionCode.SCHEDULE_NOT_FOUND));
 
-        User user = userRepository.findById(schedule.getUser().getId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다"));
-
-        user.getSchedules().remove(schedule);
         scheduleRepository.deleteById(scheduleId);
     }
 
     public void validate(LocalDateTime startAt, LocalDateTime finishAt) {
         // 시작 날짜가 종료 날짜보다 앞선 경우 or 종료 날짜가 시작 날짜보다 앞선 경우
-        try {
-            if (startAt.isAfter(finishAt) || finishAt.isBefore(startAt)) {
-                throw new IllegalArgumentException("잘못된 일정입니다.");
-            }
-        } catch (DateTimeException e) {
-            throw new IllegalArgumentException("잘못된 시간 값이 입력되었습니다.");
+        if (startAt.isAfter(finishAt) || finishAt.isBefore(startAt)) {
+            throw new GlobalException(ScheduleExceptionCode.INVALID_DATETIME);
         }
     }
 }
