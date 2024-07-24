@@ -2,6 +2,7 @@ package com.example.holing.bounded_context.schedule.controller;
 
 import com.example.holing.base.jwt.JwtProvider;
 import com.example.holing.bounded_context.schedule.api.ScheduleApi;
+import com.example.holing.bounded_context.schedule.dto.ScheduleCountDto;
 import com.example.holing.bounded_context.schedule.dto.ScheduleRequestDto;
 import com.example.holing.bounded_context.schedule.dto.ScheduleResponseDto;
 import com.example.holing.bounded_context.schedule.service.ScheduleService;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 
 @RestController
@@ -40,6 +43,24 @@ public class ScheduleController implements ScheduleApi {
         LocalDate selectedDate = LocalDate.parse(date);
         return ResponseEntity.ok().body(scheduleService.read(Long.parseLong(userId), selectedDate.atStartOfDay(), selectedDate.atStartOfDay().plusDays(1)));
     }
+
+    /**
+     * 해당 월의 모든 날짜에 일정 개수를 반환함
+     */
+
+    public ResponseEntity<List<ScheduleCountDto>> getScheduleCount(HttpServletRequest request, @RequestParam("date") String date) {
+        String accessToken = jwtProvider.getToken(request);
+        String userId = jwtProvider.getUserId(accessToken);
+
+        LocalDate selectedDate = LocalDate.parse(date);
+
+        YearMonth yearMonth = YearMonth.from(selectedDate);
+        LocalDateTime firstDay = yearMonth.atDay(1).atStartOfDay();
+        LocalDateTime lastDay = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+
+        return ResponseEntity.ok().body(scheduleService.countSchedules(Long.parseLong(userId), firstDay, lastDay));
+    }
+
 
     /**
      * 일정 등록
