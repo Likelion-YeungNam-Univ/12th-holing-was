@@ -1,8 +1,8 @@
 package com.example.holing.bounded_context.survey.controller;
 
 import com.example.holing.base.jwt.JwtProvider;
-import com.example.holing.bounded_context.survey.dto.QuestionResponseDto;
-import com.example.holing.bounded_context.survey.entity.Question;
+import com.example.holing.bounded_context.survey.dto.SymptomQuestionResponseDto;
+import com.example.holing.bounded_context.survey.entity.SymptomQuestion;
 import com.example.holing.bounded_context.survey.service.QuestionService;
 import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.service.UserService;
@@ -26,13 +26,13 @@ public class QuestionController {
 
     @GetMapping("/symptom")
     @Operation(summary = "증상 테스트 문항 조회", description = "사용자가 자가테스트의 문항을 조회하기 위한 API 입니다")
-    public ResponseEntity<List<QuestionResponseDto>> readQuestion(HttpServletRequest request) {
+    public ResponseEntity<List<SymptomQuestionResponseDto>> readQuestion(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
         User user = userService.read(Long.parseLong(userId));
-        List<Question> questions = user.getIsPeriod() ? questionService.readAll() : questionService.readAllByTagNotPeriod();
-        List<QuestionResponseDto> response = questions.stream().map(QuestionResponseDto::fromEntity).toList();
+        List<SymptomQuestion> symptomQuestions = user.getIsPeriod() ? questionService.readAll() : questionService.readAllByTagNotPeriod();
+        List<SymptomQuestionResponseDto> response = symptomQuestions.stream().map(SymptomQuestionResponseDto::fromEntity).toList();
         return ResponseEntity.ok().body(response);
     }
 }
