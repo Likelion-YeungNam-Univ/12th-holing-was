@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -30,7 +29,6 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/report")
 public class ReportController {
 
     private final UserService userService;
@@ -38,8 +36,8 @@ public class ReportController {
     private final UserReportService userReportService;
     private final JwtProvider jwtProvider;
 
-    @GetMapping("/score")
-    @Operation(summary = "리포트 점수 조회", description = "사용자가 리포트들의 점수를 조회하기 위한 API 입니다")
+    @GetMapping("/user/me/reports/score")
+    @Operation(summary = "리포트 점수 조회", description = "사용자가 본인의 리포트 점수들을 조회하기 위한 API 입니다")
     public ResponseEntity<List<ReportScoreResponseDto>> score(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
@@ -51,8 +49,22 @@ public class ReportController {
         return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping("/summary")
-    @Operation(summary = "리포트 요약 조회", description = "사용자가 리포트들의 요약을 조회하기 위한 API 입니다")
+    @GetMapping("/user/mate/reports/score")
+    @Operation(summary = "짝꿍 리포트 점수 조회", description = "사용자가 짝꿍의 리포트 점수들을 조회하기 위한 API 입니다")
+    public ResponseEntity<List<ReportScoreResponseDto>> mateScore(HttpServletRequest request) {
+        String accessToken = jwtProvider.getToken(request);
+        String userId = jwtProvider.getUserId(accessToken);
+
+        User user = userService.read(Long.parseLong(userId));
+        User mate = userService.read(user.getMate().getId());
+
+        List<UserReport> reports = userReportService.readAllWithReportByUser(mate);
+        List<ReportScoreResponseDto> response = reports.stream().map(ReportScoreResponseDto::fromEntity).toList();
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/user/me/reports/summary")
+    @Operation(summary = "본인 리포트 요약 조회", description = "사용자가 본인의 리포트 요약들을 조회하기 위한 API 입니다")
     public ResponseEntity<List<ReportSummaryResponseDto>> summary(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
@@ -64,7 +76,21 @@ public class ReportController {
         return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping("/{reportId}")
+    @GetMapping("/user/mate/reports/summary")
+    @Operation(summary = "짝꿍 리포트 요약 조회", description = "사용자가 짝꿍의 리포트 요약들을 조회하기 위한 API 입니다")
+    public ResponseEntity<List<ReportSummaryResponseDto>> mateSummary(HttpServletRequest request) {
+        String accessToken = jwtProvider.getToken(request);
+        String userId = jwtProvider.getUserId(accessToken);
+
+        User user = userService.read(Long.parseLong(userId));
+        User mate = userService.read(user.getMate().getId());
+
+        List<ReportSummaryResponseDto> response = userReportService.readAllByUser(mate).stream()
+                .map(ReportSummaryResponseDto::fromEntity).toList();
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/reports/{reportId}")
     @Operation(summary = "리포트 상세 조회", description = "사용자가 리포트를 상세 조회하기 위한 API 입니다")
     public ResponseEntity<ReportDetailResponseDto> read(HttpServletRequest request, @PathVariable Long reportId) {
         String accessToken = jwtProvider.getToken(request);
@@ -77,7 +103,7 @@ public class ReportController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping("")
+    @PostMapping("/reports")
     @Operation(summary = "리포트 생성", description = "사용자가 자가 테스트를 하여 리포트를 생성하기 위한 API 입니다.")
     public ResponseEntity<String> create(HttpServletRequest request, @RequestBody @Valid @Size(min = 6, max = 6) List<ReportRequestDto> reportRequestDtos) {
         String accessToken = jwtProvider.getToken(request);
