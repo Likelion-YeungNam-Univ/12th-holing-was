@@ -1,6 +1,7 @@
 package com.example.holing.bounded_context.schedule.service;
 
 import com.example.holing.base.exception.GlobalException;
+import com.example.holing.bounded_context.schedule.dto.ScheduleCountDto;
 import com.example.holing.bounded_context.schedule.dto.ScheduleRequestDto;
 import com.example.holing.bounded_context.schedule.dto.ScheduleResponseDto;
 import com.example.holing.bounded_context.schedule.entity.Schedule;
@@ -13,8 +14,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,6 +75,37 @@ public class ScheduleService {
         return mySchedules.stream()
                 .map(ScheduleResponseDto::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    public List<ScheduleCountDto> countSchedules(Long userId, LocalDateTime startAt, LocalDateTime finishAt) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GlobalException(UserExceptionCode.USER_NOT_FOUND));
+
+        List<Schedule> mySchedules = scheduleRepository.findByUserIdAndStartAtBetweenOrderByStartAtAsc(userId, startAt, finishAt);
+
+        if (user.getMate() != null) {
+            mySchedules.addAll(scheduleRepository.findByUserIdAndStartAtBetweenOrderByStartAtAsc(user.getMate().getId(), startAt, finishAt));
+        }
+
+        Map<LocalDate, Integer> dateCount = new HashMap<>();
+        for (Schedule schedule : mySchedules) {
+            LocalDate startDate = schedule.getStartAt().toLocalDate();
+            LocalDate finishDate = schedule.getFinishAt().toLocalDate();
+
+            for (LocalDate date = startDate; !date.isAfter(finishDate); date = date.plusDays(1)) {
+                dateCount.put(date, dateCount.getOrDefault(date, 0) + 1);
+            }
+        }
+
+        List<ScheduleCountDto> scheduleCountDtos = new ArrayList<>();
+        for (Map.Entry<LocalDate, Integer> entry : dateCount.entrySet()) {
+            scheduleCountDtos.add(new ScheduleCountDto(entry.getKey(), entry.getValue()));
+        }
+
+        scheduleCountDtos.sort(Comparator.comparing(ScheduleCountDto::date));
+
+        return scheduleCountDtos;
     }
 
     /**

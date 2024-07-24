@@ -1,5 +1,6 @@
 package com.example.holing.bounded_context.schedule.api;
 
+import com.example.holing.bounded_context.schedule.dto.ScheduleCountDto;
 import com.example.holing.bounded_context.schedule.dto.ScheduleRequestDto;
 import com.example.holing.bounded_context.schedule.dto.ScheduleResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +26,7 @@ import java.util.List;
 @Tag(name = "[캘린더 관련 일정 API]", description = "캘린더 기능의 일정 관련 API")
 public interface ScheduleApi {
 
+
     @GetMapping("/schedules")
     @Operation(summary = "선택한 날짜의 일정을 조회", description = "선택한 날짜의 일정을 조회하기 위한 API입니다.")
     @ApiResponses(value = {
@@ -41,6 +43,23 @@ public interface ScheduleApi {
                     }))
     })
     ResponseEntity<List<ScheduleResponseDto>> getDateSchedule(HttpServletRequest request, @RequestParam("date") String date);
+
+    @GetMapping("/schedules/month")
+    @Operation(summary = "선택한 날짜가 포함된 월의 모든 일정 개수를 조회", description = "선택된 날짜의 월에 포함된 모든 일정의 개수를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "모든 일정 개수 카운팅 성공"),
+            @ApiResponse(responseCode = "404", description = "일정 개수 카운팅 실패",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                                                                {
+                                                                                    "timeStamp": "2024-07-24T00:30:09.9259602",
+                                                                                    "name": "SCHEDULE_NOT_FOUND",
+                                                                                    "cause": "일정을 찾을 수 없습니다."
+                                                                                }
+                                    """),
+                    }))
+    })
+    ResponseEntity<List<ScheduleCountDto>> getScheduleCount(HttpServletRequest request, @RequestParam("date") String date);
 
     @PostMapping("/schedules")
     @Operation(summary = "선택한 날짜의 일정을 생성", description = "선택한 날짜의 일정을 생성하기 위한 API입니다.")
