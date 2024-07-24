@@ -13,6 +13,7 @@ import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +79,7 @@ public class ReportController {
 
     @PostMapping("")
     @Operation(summary = "리포트 생성", description = "사용자가 자가 테스트를 하여 리포트를 생성하기 위한 API 입니다.")
-    public ResponseEntity<String> create(HttpServletRequest request, @RequestBody @Size(min = 6, max = 6) List<ReportRequestDto> reportRequestDtos) {
+    public ResponseEntity<String> create(HttpServletRequest request, @RequestBody @Valid @Size(min = 6, max = 6) List<ReportRequestDto> reportRequestDtos) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
