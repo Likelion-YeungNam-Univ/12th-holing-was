@@ -1,6 +1,7 @@
 package com.example.holing.bounded_context.report.controller;
 
 import com.example.holing.base.jwt.JwtProvider;
+import com.example.holing.bounded_context.report.api.ReportApi;
 import com.example.holing.bounded_context.report.dto.ReportDetailResponseDto;
 import com.example.holing.bounded_context.report.dto.ReportRequestDto;
 import com.example.holing.bounded_context.report.dto.ReportScoreResponseDto;
@@ -11,16 +12,13 @@ import com.example.holing.bounded_context.report.service.ReportService;
 import com.example.holing.bounded_context.report.service.UserReportService;
 import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,15 +27,13 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-public class ReportController {
+public class ReportController implements ReportApi {
 
     private final UserService userService;
     private final ReportService reportService;
     private final UserReportService userReportService;
     private final JwtProvider jwtProvider;
 
-    @GetMapping("/user/me/reports/score")
-    @Operation(summary = "리포트 점수 조회", description = "사용자가 본인의 리포트 점수들을 조회하기 위한 API 입니다")
     public ResponseEntity<List<ReportScoreResponseDto>> score(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
@@ -49,8 +45,6 @@ public class ReportController {
         return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping("/user/mate/reports/score")
-    @Operation(summary = "짝꿍 리포트 점수 조회", description = "사용자가 짝꿍의 리포트 점수들을 조회하기 위한 API 입니다")
     public ResponseEntity<List<ReportScoreResponseDto>> mateScore(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
@@ -63,8 +57,6 @@ public class ReportController {
         return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping("/user/me/reports/summary")
-    @Operation(summary = "본인 리포트 요약 조회", description = "사용자가 본인의 리포트 요약들을 조회하기 위한 API 입니다")
     public ResponseEntity<List<ReportSummaryResponseDto>> summary(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
@@ -76,8 +68,6 @@ public class ReportController {
         return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping("/user/mate/reports/summary")
-    @Operation(summary = "짝꿍 리포트 요약 조회", description = "사용자가 짝꿍의 리포트 요약들을 조회하기 위한 API 입니다")
     public ResponseEntity<List<ReportSummaryResponseDto>> mateSummary(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
@@ -90,8 +80,6 @@ public class ReportController {
         return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping("/reports/{reportId}")
-    @Operation(summary = "리포트 상세 조회", description = "사용자가 리포트를 상세 조회하기 위한 API 입니다")
     public ResponseEntity<ReportDetailResponseDto> read(HttpServletRequest request, @PathVariable Long reportId) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
@@ -103,8 +91,6 @@ public class ReportController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping("/reports")
-    @Operation(summary = "리포트 생성", description = "사용자가 자가 테스트를 하여 리포트를 생성하기 위한 API 입니다.")
     public ResponseEntity<String> create(HttpServletRequest request, @RequestBody @Valid @Size(min = 6, max = 6) List<ReportRequestDto> reportRequestDtos) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
