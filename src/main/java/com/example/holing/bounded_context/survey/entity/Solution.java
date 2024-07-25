@@ -39,4 +39,7 @@ public class Solution {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Tag tag;
+
+    @Column(nullable = false)
+    private Boolean isAdditional;
 }
