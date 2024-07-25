@@ -1,6 +1,6 @@
-package com.example.holing.bounded_context.missionresult.repository;
+package com.example.holing.bounded_context.mission.repository;
 
-import com.example.holing.bounded_context.missionresult.entity.MissionResult;
+import com.example.holing.bounded_context.mission.entity.MissionResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
