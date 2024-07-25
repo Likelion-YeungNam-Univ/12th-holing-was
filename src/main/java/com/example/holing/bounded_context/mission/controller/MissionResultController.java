@@ -1,18 +1,14 @@
-package com.example.holing.bounded_context.missionresult.controller;
+package com.example.holing.bounded_context.mission.controller;
 
 import com.example.holing.base.jwt.JwtProvider;
+import com.example.holing.bounded_context.mission.dto.MissionResultResponseDto;
 import com.example.holing.bounded_context.mission.repository.MissionRepository;
-import com.example.holing.bounded_context.missionresult.dto.MissionResultResponseDto;
-import com.example.holing.bounded_context.missionresult.repository.MissionResultRepository;
-import com.example.holing.bounded_context.missionresult.service.MissionResultService;
+import com.example.holing.bounded_context.mission.repository.MissionResultRepository;
+import com.example.holing.bounded_context.mission.service.MissionResultService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 

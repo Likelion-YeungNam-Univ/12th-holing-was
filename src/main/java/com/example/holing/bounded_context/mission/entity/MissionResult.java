@@ -1,7 +1,6 @@
-package com.example.holing.bounded_context.missionresult.entity;
+package com.example.holing.bounded_context.mission.entity;
 
 import com.example.holing.base.BaseTimeEntity;
-import com.example.holing.bounded_context.mission.entity.Mission;
 import com.example.holing.bounded_context.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;

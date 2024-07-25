@@ -1,12 +1,11 @@
-package com.example.holing.bounded_context.missionresult.service;
+package com.example.holing.bounded_context.mission.service;
 
 import com.example.holing.base.exception.GlobalException;
+import com.example.holing.bounded_context.mission.dto.MissionResultResponseDto;
 import com.example.holing.bounded_context.mission.entity.Mission;
+import com.example.holing.bounded_context.mission.entity.MissionResult;
 import com.example.holing.bounded_context.mission.repository.MissionRepository;
-import com.example.holing.bounded_context.mission.service.MissionService;
-import com.example.holing.bounded_context.missionresult.dto.MissionResultResponseDto;
-import com.example.holing.bounded_context.missionresult.entity.MissionResult;
-import com.example.holing.bounded_context.missionresult.repository.MissionResultRepository;
+import com.example.holing.bounded_context.mission.repository.MissionResultRepository;
 import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.exception.UserExceptionCode;
 import com.example.holing.bounded_context.user.repository.UserRepository;

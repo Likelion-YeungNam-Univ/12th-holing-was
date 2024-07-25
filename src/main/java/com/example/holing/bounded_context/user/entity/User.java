@@ -2,7 +2,7 @@ package com.example.holing.bounded_context.user.entity;
 
 import com.example.holing.bounded_context.auth.dto.OAuthUserInfoDto;
 import com.example.holing.bounded_context.auth.dto.SignInRequestDto;
-import com.example.holing.bounded_context.missionresult.entity.MissionResult;
+import com.example.holing.bounded_context.mission.entity.MissionResult;
 import com.example.holing.bounded_context.schedule.entity.Schedule;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

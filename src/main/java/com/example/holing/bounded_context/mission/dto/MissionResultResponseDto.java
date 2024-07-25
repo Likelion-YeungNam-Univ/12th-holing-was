@@ -1,7 +1,7 @@
-package com.example.holing.bounded_context.missionresult.dto;
+package com.example.holing.bounded_context.mission.dto;
 
 import com.example.holing.bounded_context.mission.entity.Mission;
-import com.example.holing.bounded_context.missionresult.entity.MissionResult;
+import com.example.holing.bounded_context.mission.entity.MissionResult;
 
 public record MissionResultResponseDto(
         Long id,
