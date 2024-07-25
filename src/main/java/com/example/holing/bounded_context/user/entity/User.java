@@ -4,14 +4,7 @@ import com.example.holing.bounded_context.auth.dto.OAuthUserInfoDto;
 import com.example.holing.bounded_context.auth.dto.SignInRequestDto;
 import com.example.holing.bounded_context.missionresult.entity.MissionResult;
 import com.example.holing.bounded_context.schedule.entity.Schedule;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +22,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements UserDetails {
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user")
     List<Schedule> schedules = new ArrayList<>();
 
     @Id
@@ -62,7 +55,7 @@ public class User implements UserDetails {
     @OneToOne
     private User mate;
 
-    @OneToMany
+    @OneToMany(mappedBy = "user")
     private List<MissionResult> missionResults;
 
     @Builder
