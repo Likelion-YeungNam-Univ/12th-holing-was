@@ -21,7 +21,7 @@ public class MissionResult extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Mission mission;
 
     @Builder
