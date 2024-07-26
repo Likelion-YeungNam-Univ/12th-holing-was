@@ -20,22 +20,17 @@ public class Mission {
     @Column(nullable = false)
     private String content;
 
-    @ManyToOne
-    @JoinColumn(name = "tag_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Tag tag;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private int reward;
 
-    @Column(nullable = false)
-    private String description;
-
     @Builder
-    public Mission(String title, String content, Tag tag, int reward, String description) {
+    public Mission(String title, String content, Tag tag, int reward) {
         this.title = title;
         this.content = content;
         this.tag = tag;
         this.reward = reward;
-        this.description = description;
     }
 }
