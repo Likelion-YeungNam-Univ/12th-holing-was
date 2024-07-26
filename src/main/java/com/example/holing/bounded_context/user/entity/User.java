@@ -97,6 +97,11 @@ public class User implements UserDetails {
         user.mate = null;
     }
 
+    public int addPoint(int point) {
+        this.point += point;
+        return this.point;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("user"));

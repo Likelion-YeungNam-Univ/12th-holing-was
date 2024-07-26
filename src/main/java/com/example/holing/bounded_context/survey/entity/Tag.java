@@ -23,6 +23,6 @@ public class Tag {
     @OneToMany(mappedBy = "tag", fetch = FetchType.LAZY)
     private List<Solution> solutions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "tag")
+    @OneToMany(mappedBy = "tag", fetch = FetchType.LAZY)
     private List<Mission> missions = new ArrayList<>();
 }
