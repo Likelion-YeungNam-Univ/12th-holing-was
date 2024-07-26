@@ -46,11 +46,13 @@ public class MissionResultController implements MissionApi {
      * @param request
      * @return
      */
-    public ResponseEntity<List<MissionResultResponseDto>> read(HttpServletRequest request) {
+    public ResponseEntity<List<MissionResultResponseDto>> read(HttpServletRequest request, @RequestParam String date) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
-        List<MissionResultResponseDto> todayMissionResultList = missionResultService.read(Long.parseLong(userId));
+        LocalDate selectedDate = LocalDate.parse(date);
+
+        List<MissionResultResponseDto> todayMissionResultList = missionResultService.read(Long.parseLong(userId), selectedDate);
 
         return ResponseEntity.ok().body(todayMissionResultList);
     }

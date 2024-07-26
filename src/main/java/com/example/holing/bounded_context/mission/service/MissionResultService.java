@@ -56,11 +56,11 @@ public class MissionResultService {
     }
 
     @Transactional(readOnly = true)
-    public List<MissionResultResponseDto> read(Long userId) {
+    public List<MissionResultResponseDto> read(Long userId, LocalDate date) {
         User user = userService.read(userId);
 
-        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
-        LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
 
         List<MissionResult> todayMission = missionResultRepository.findAllByUserIdAndCreatedAtBetween(userId, startOfDay, endOfDay);
 //        List<MissionResult> todayMission = user.getMissionResults().stream()
@@ -171,6 +171,10 @@ public class MissionResultService {
 
         for (int i = 0; i < 3; i++) {
             MissionResult checkMissionResult = missionResults.get(i);
+
+            // 완료된 미션의 경우 넘어
+            if (checkMissionResult.isCompleted() == true) continue;
+
             // 생성 시간과 수정 시간이 다르다면 -> 미션 교체한 것
             if (!checkMissionResult.getCreatedAt().isEqual(checkMissionResult.getModifiedAt())) {
                 return true;

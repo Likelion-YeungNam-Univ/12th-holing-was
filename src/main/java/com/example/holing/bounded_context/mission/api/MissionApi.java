@@ -36,12 +36,12 @@ public interface MissionApi {
     })
     ResponseEntity<List<MissionResultResponseDto>> create(HttpServletRequest request);
 
-    @GetMapping("/today")
-    @Operation(summary = "미션 조회", description = "현재의 미션 목록을 조회하는 API입니다.")
+    @GetMapping("/history")
+    @Operation(summary = "미션 조회", description = "특정 날짜의 미션 목록을 조회하는 API입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "미션 조회 성공")
     })
-    ResponseEntity<List<MissionResultResponseDto>> read(HttpServletRequest request);
+    ResponseEntity<List<MissionResultResponseDto>> read(HttpServletRequest request, @RequestParam String date);
 
     @PatchMapping("/{missionResultId}")
     @Operation(summary = "미션 교체", description = "선택한 미션을 동일한 태그내의 다른 미션으로 교체합니다.")
