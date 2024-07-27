@@ -13,7 +13,7 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
 
     @Query("select m from Medicine m " +
             "left join fetch m.medicineHistoryList " +
-            "where m.user = :user")
+            "where m.user = :user order by m.takenAt asc")
     List<Medicine> findAllByUser(User user);
 
 //    @Query(value = "SELECT m.id, m.name, m.taken_at, mh.id " +
