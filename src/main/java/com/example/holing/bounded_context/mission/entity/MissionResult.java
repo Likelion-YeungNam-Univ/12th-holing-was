@@ -1,15 +1,8 @@
-package com.example.holing.bounded_context.missionresult.entity;
+package com.example.holing.bounded_context.mission.entity;
 
 import com.example.holing.base.BaseTimeEntity;
-import com.example.holing.bounded_context.mission.entity.Mission;
 import com.example.holing.bounded_context.user.entity.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -25,9 +18,10 @@ public class MissionResult extends BaseTimeEntity {
     private boolean isCompleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Mission mission;
 
     @Builder
