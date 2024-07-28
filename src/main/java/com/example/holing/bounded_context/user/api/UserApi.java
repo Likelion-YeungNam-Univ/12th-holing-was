@@ -1,7 +1,7 @@
 package com.example.holing.bounded_context.user.api;
 
 import com.example.holing.bounded_context.user.dto.UserInfoResponseDto;
-import com.example.holing.bounded_context.user.dto.UserResponseDto;
+import com.example.holing.bounded_context.user.dto.UserRecentReportResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -21,11 +21,11 @@ public interface UserApi {
 
     @GetMapping("/me/reports")
     @Operation(summary = "본인 정보 및 리포트 조회", description = "사용자가 본인의 정보와 리포트를 조회하기 위한 API 입니다")
-    ResponseEntity<UserResponseDto> readWithReport(HttpServletRequest request);
+    ResponseEntity<UserRecentReportResponseDto> readWithReport(HttpServletRequest request);
 
     @GetMapping("/mate/reports")
     @Operation(summary = "본인 정보 및 리포트 조회", description = "사용자가 본인의 정보와 리포트를 조회하기 위한 API 입니다")
-    ResponseEntity<UserResponseDto> readMateWithReport(HttpServletRequest request);
+    ResponseEntity<UserRecentReportResponseDto> readMateWithReport(HttpServletRequest request);
 
 
     @GetMapping("/me")

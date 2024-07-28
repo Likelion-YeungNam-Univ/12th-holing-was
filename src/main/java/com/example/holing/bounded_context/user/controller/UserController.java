@@ -5,7 +5,7 @@ import com.example.holing.bounded_context.report.entity.UserReport;
 import com.example.holing.bounded_context.report.service.UserReportService;
 import com.example.holing.bounded_context.user.api.UserApi;
 import com.example.holing.bounded_context.user.dto.UserInfoResponseDto;
-import com.example.holing.bounded_context.user.dto.UserResponseDto;
+import com.example.holing.bounded_context.user.dto.UserRecentReportResponseDto;
 import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,26 +29,26 @@ public class UserController implements UserApi {
 
 
     @Override
-    public ResponseEntity<UserResponseDto> readWithReport(HttpServletRequest request) {
+    public ResponseEntity<UserRecentReportResponseDto> readWithReport(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
         User user = userService.read(Long.parseLong(userId));
-        
+
         UserReport report = userReportService.readRecentByUser(user);
-        UserResponseDto response = UserResponseDto.of(user, report);
+        UserRecentReportResponseDto response = UserRecentReportResponseDto.of(user, report);
         return ResponseEntity.ok().body(response);
     }
 
     @Override
-    public ResponseEntity<UserResponseDto> readMateWithReport(HttpServletRequest request) {
+    public ResponseEntity<UserRecentReportResponseDto> readMateWithReport(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
         User user = userService.read(Long.parseLong(userId));
 
         UserReport mateReport = userReportService.readRecentByUser(user.getMate());
-        UserResponseDto response = UserResponseDto.of(user.getMate(), mateReport);
+        UserRecentReportResponseDto response = UserRecentReportResponseDto.of(user.getMate(), mateReport);
         return ResponseEntity.ok().body(response);
     }
 
