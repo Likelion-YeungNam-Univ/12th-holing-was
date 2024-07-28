@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("/user")
-@Tag(name = "[사용자 관련 API]", description = "사용자관련 API")
+@Tag(name = "[사용자 관련 API]", description = "사용자 조회 및 짝꿍 연결 API")
 public interface UserApi {
 
     @GetMapping("/me/reports")

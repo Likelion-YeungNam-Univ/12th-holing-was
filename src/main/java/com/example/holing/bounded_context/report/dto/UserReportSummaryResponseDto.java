@@ -17,7 +17,6 @@ public record UserReportSummaryResponseDto(
         int month,
         @Schema(description = "주차", example = "1")
         int weekOfMonth,
-        @Schema(description = "사용자 리포트 중 점수가 가장 높은 리포트", example = "1")
         ReportDto top1Report
 ) {
     public static UserReportSummaryResponseDto fromEntity(UserReport userReport) {
