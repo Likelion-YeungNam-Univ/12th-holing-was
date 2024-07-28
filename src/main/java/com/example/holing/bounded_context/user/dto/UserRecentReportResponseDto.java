@@ -17,13 +17,13 @@ import java.util.Locale;
 
 @Schema(description = "사용자 및 최신 리포트 정보 응답 DTO")
 public record UserRecentReportResponseDto(
-        @Schema(description = "유저 닉네임", example = "nickname")
+        @Schema(description = "유저 닉네임", example = "myNickname")
         String nickname,
         @Schema(description = "유저 성별", example = "MALE")
         Gender gender,
         @Schema(description = "프로필 이미지 URL", example = "http://example.com/image.jpg")
         String profileImgUrl,
-        @Schema(description = "짝꿍 닉네임", example = "nickname")
+        @Schema(description = "짝꿍 닉네임", example = "mateNickname")
         String mateNickname,
         @Schema(description = "유저 가입기간", example = "100")
         long dDay,
@@ -49,16 +49,14 @@ public record UserRecentReportResponseDto(
             int weekOfMonth,
             @Schema(description = "모든 리포트 총 점수", example = "50")
             int totalScore,
-            @Schema(description = "사용자 리포트 중 점수가 가장 높은 리포트", example = "1")
             ReportDto top1Report,
-            @Schema(description = "사용자 리포트 중 두번째로 점수가 가장 높은 리포트", example = "1")
             ReportDto top2Report
 
     ) {
         public static UserReportDto fromEntity(UserReport userReport) {
             LocalDateTime createdAt = userReport.getCreatedAt();
             List<Report> reports = userReport.getReports().stream()
-                    .sorted(Comparator.comparingInt(Report::getScore)).toList();
+                    .sorted(Comparator.comparingInt(Report::getScore).reversed()).toList();
 
 
             return new UserReportDto(
