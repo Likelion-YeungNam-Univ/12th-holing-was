@@ -1,5 +1,6 @@
 package com.example.holing.bounded_context.user.entity;
 
+import com.example.holing.base.BaseTimeEntity;
 import com.example.holing.bounded_context.auth.dto.OAuthUserInfoDto;
 import com.example.holing.bounded_context.auth.dto.SignInRequestDto;
 import com.example.holing.bounded_context.mission.entity.MissionResult;
@@ -20,7 +21,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User implements UserDetails {
+public class User extends BaseTimeEntity implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     List<Schedule> schedules = new ArrayList<>();

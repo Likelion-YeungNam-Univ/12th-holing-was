@@ -1,6 +1,7 @@
 package com.example.holing.bounded_context.user.api;
 
 import com.example.holing.bounded_context.user.dto.UserInfoResponseDto;
+import com.example.holing.bounded_context.user.dto.UserResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -17,6 +18,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/user")
 @Tag(name = "[사용자 관련 API]", description = "사용자관련 API")
 public interface UserApi {
+
+    @GetMapping("/me/reports")
+    @Operation(summary = "본인 정보 및 리포트 조회", description = "사용자가 본인의 정보와 리포트를 조회하기 위한 API 입니다")
+    ResponseEntity<UserResponseDto> readWithReport(HttpServletRequest request);
+
+    @GetMapping("/mate/reports")
+    @Operation(summary = "본인 정보 및 리포트 조회", description = "사용자가 본인의 정보와 리포트를 조회하기 위한 API 입니다")
+    ResponseEntity<UserResponseDto> readMateWithReport(HttpServletRequest request);
+
 
     @GetMapping("/me")
     @Operation(summary = "본인 정보 조회", description = "사용자가 본인의 정보를 조회하기 위한 API 입니다")
