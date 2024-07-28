@@ -2,10 +2,10 @@ package com.example.holing.bounded_context.report.controller;
 
 import com.example.holing.base.jwt.JwtProvider;
 import com.example.holing.bounded_context.report.api.ReportApi;
-import com.example.holing.bounded_context.report.dto.ReportDetailResponseDto;
 import com.example.holing.bounded_context.report.dto.ReportRequestDto;
-import com.example.holing.bounded_context.report.dto.ReportScoreResponseDto;
-import com.example.holing.bounded_context.report.dto.ReportSummaryResponseDto;
+import com.example.holing.bounded_context.report.dto.UserReportDetailResponseDto;
+import com.example.holing.bounded_context.report.dto.UserReportScoreResponseDto;
+import com.example.holing.bounded_context.report.dto.UserReportSummaryResponseDto;
 import com.example.holing.bounded_context.report.entity.Report;
 import com.example.holing.bounded_context.report.entity.UserReport;
 import com.example.holing.bounded_context.report.service.ReportService;
@@ -34,18 +34,18 @@ public class ReportController implements ReportApi {
     private final UserReportService userReportService;
     private final JwtProvider jwtProvider;
 
-    public ResponseEntity<List<ReportScoreResponseDto>> score(HttpServletRequest request) {
+    public ResponseEntity<List<UserReportScoreResponseDto>> score(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
         User user = userService.read(Long.parseLong(userId));
 
         List<UserReport> reports = userReportService.readAllWithReportByUser(user);
-        List<ReportScoreResponseDto> response = reports.stream().map(ReportScoreResponseDto::fromEntity).toList();
+        List<UserReportScoreResponseDto> response = reports.stream().map(UserReportScoreResponseDto::fromEntity).toList();
         return ResponseEntity.ok().body(response);
     }
 
-    public ResponseEntity<List<ReportScoreResponseDto>> mateScore(HttpServletRequest request) {
+    public ResponseEntity<List<UserReportScoreResponseDto>> mateScore(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
@@ -53,41 +53,41 @@ public class ReportController implements ReportApi {
         User mate = userService.read(user.getMate().getId());
 
         List<UserReport> reports = userReportService.readAllWithReportByUser(mate);
-        List<ReportScoreResponseDto> response = reports.stream().map(ReportScoreResponseDto::fromEntity).toList();
+        List<UserReportScoreResponseDto> response = reports.stream().map(UserReportScoreResponseDto::fromEntity).toList();
         return ResponseEntity.ok().body(response);
     }
 
-    public ResponseEntity<List<ReportSummaryResponseDto>> summary(HttpServletRequest request) {
+    public ResponseEntity<List<UserReportSummaryResponseDto>> summary(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
         User user = userService.read(Long.parseLong(userId));
 
-        List<ReportSummaryResponseDto> response = userReportService.readAllByUser(user).stream()
-                .map(ReportSummaryResponseDto::fromEntity).toList();
+        List<UserReportSummaryResponseDto> response = userReportService.readAllByUser(user).stream()
+                .map(UserReportSummaryResponseDto::fromEntity).toList();
         return ResponseEntity.ok().body(response);
     }
 
-    public ResponseEntity<List<ReportSummaryResponseDto>> mateSummary(HttpServletRequest request) {
+    public ResponseEntity<List<UserReportSummaryResponseDto>> mateSummary(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
         User user = userService.read(Long.parseLong(userId));
         User mate = userService.read(user.getMate().getId());
 
-        List<ReportSummaryResponseDto> response = userReportService.readAllByUser(mate).stream()
-                .map(ReportSummaryResponseDto::fromEntity).toList();
+        List<UserReportSummaryResponseDto> response = userReportService.readAllByUser(mate).stream()
+                .map(UserReportSummaryResponseDto::fromEntity).toList();
         return ResponseEntity.ok().body(response);
     }
 
-    public ResponseEntity<ReportDetailResponseDto> read(HttpServletRequest request, @PathVariable Long reportId) {
+    public ResponseEntity<UserReportDetailResponseDto> read(HttpServletRequest request, @PathVariable Long reportId) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
         User user = userService.read(Long.parseLong(userId));
 
         UserReport userReport = userReportService.readWithReportAndSolutionById(reportId);
-        ReportDetailResponseDto response = ReportDetailResponseDto.fromEntity(userReport);
+        UserReportDetailResponseDto response = UserReportDetailResponseDto.fromEntity(userReport);
         return ResponseEntity.ok().body(response);
     }
 

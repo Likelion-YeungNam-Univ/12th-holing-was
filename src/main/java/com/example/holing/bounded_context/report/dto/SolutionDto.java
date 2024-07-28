@@ -21,5 +21,4 @@ public record SolutionDto(
                 solution.getContent3()
         );
     }
-
 }

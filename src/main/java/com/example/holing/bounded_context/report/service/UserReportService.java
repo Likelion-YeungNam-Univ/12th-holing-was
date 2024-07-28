@@ -37,7 +37,7 @@ public class UserReportService {
     }
 
     public List<UserReport> readAllByUser(User user) {
-        return userReportRepository.findAllByUser(user);
+        return userReportRepository.findAllWithReportAndSolutionByUser(user);
     }
 
     public List<Tag> getUserRecentReportTag(User user) {
