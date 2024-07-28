@@ -27,11 +27,11 @@ public interface MedicineApi {
             """)
     public ResponseEntity<?> read(HttpServletRequest request);
 
-    @PostMapping("/{medicineId}/taken")
+    @PostMapping("/{medicineId}")
     @Operation(summary = "영양제 복용 기록 생성", description = "사용자가 영양제를 복용했다는 기록을 생성하기 위한 API 입니다.")
     public ResponseEntity<String> taken(HttpServletRequest request, @PathVariable Long medicineId);
 
-    @DeleteMapping("/{medicineId}/skip")
+    @DeleteMapping("/{medicineId}")
     @Operation(summary = "영양제 복용 기록 삭제", description = "사용자가 영양제 복용으로 생성된 영양제 복용 기록을 삭제하기 위한 API 입니다.")
     public ResponseEntity<String> skip(HttpServletRequest request, @PathVariable Long medicineId);
 }
