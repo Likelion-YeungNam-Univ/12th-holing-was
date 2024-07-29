@@ -17,7 +17,7 @@ public record UserReportDetailResponseDto(
         int month,
         @Schema(description = "주차", example = "1")
         int weekOfMonth,
-        List<ReportDto> reportList
+        List<ReportSummaryDto> reportList
 ) {
     public static UserReportDetailResponseDto fromEntity(UserReport userReport) {
         LocalDateTime createdAt = userReport.getCreatedAt();
@@ -25,13 +25,13 @@ public record UserReportDetailResponseDto(
                 createdAt.getMonthValue(),
                 createdAt.get(WeekFields.of(Locale.getDefault()).weekOfMonth()),
                 userReport.getReports().stream()
-                        .map(ReportDto::fromEntity)
-                        .sorted(Comparator.comparingInt(ReportDto::score).reversed())
+                        .map(ReportSummaryDto::fromEntity)
+                        .sorted(Comparator.comparingInt(ReportSummaryDto::score).reversed())
                         .toList()
         );
     }
 
-    public record ReportDto(
+    public record ReportSummaryDto(
             @Schema(description = "점수", example = "5")
             int score,
             @Schema(description = "태그 이름", example = "SLEEP_PROBLEM")
@@ -40,10 +40,10 @@ public record UserReportDetailResponseDto(
             String title,
             SolutionDto solution
     ) {
-        public static ReportDto fromEntity(Report report) {
+        public static ReportSummaryDto fromEntity(Report report) {
             String additional = report.getAdditional();
             Solution solution = report.getSolution();
-            return new ReportDto(
+            return new ReportSummaryDto(
                     report.getScore(),
                     report.getTag().getName(),
                     solution.getIsAdditional() ? additional + solution.getTitle() : solution.getTitle(),
