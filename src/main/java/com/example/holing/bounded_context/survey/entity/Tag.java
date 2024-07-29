@@ -26,8 +26,11 @@ public class Tag {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private String imgUrl;
+    @Column(nullable = true)
+    private String manImgUrl;
+
+    @Column(nullable = true)
+    private String womanImgUrl;
 
     @OneToMany(mappedBy = "tag", fetch = FetchType.LAZY)
     private List<Solution> solutions = new ArrayList<>();

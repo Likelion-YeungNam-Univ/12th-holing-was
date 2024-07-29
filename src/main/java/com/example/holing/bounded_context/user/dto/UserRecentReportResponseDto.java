@@ -2,6 +2,7 @@ package com.example.holing.bounded_context.user.dto;
 
 import com.example.holing.bounded_context.report.entity.Report;
 import com.example.holing.bounded_context.report.entity.UserReport;
+import com.example.holing.bounded_context.survey.dto.TagDto;
 import com.example.holing.bounded_context.survey.entity.Solution;
 import com.example.holing.bounded_context.user.entity.Gender;
 import com.example.holing.bounded_context.user.entity.User;
@@ -72,8 +73,8 @@ public record UserRecentReportResponseDto(
         public record ReportDto(
                 @Schema(description = "점수", example = "5")
                 int score,
-                @Schema(description = "증상 대표 이미지", example = "url")
-                String imgUrl,
+//                @Schema(description = "증상 대표 이미지", example = "url")
+                TagDto tagDto,
                 @Schema(description = "제목", example = "무릎의 관절통증에 가장 큰 어려움을 겪어요")
                 String title
         ) {
@@ -82,7 +83,7 @@ public record UserRecentReportResponseDto(
                 Solution solution = report.getSolution();
                 return new ReportDto(
                         report.getScore(),
-                        report.getTag().getImgUrl(),
+                        TagDto.FromEntity(report.getTag()),
                         solution.getIsAdditional() ? additional + solution.getTitle() : solution.getTitle()
                 );
             }
