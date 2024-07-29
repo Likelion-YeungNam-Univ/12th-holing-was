@@ -17,6 +17,7 @@ public record UserReportSummaryResponseDto(
         int month,
         @Schema(description = "주차", example = "1")
         int weekOfMonth,
+        LocalDateTime createdAt,
         ReportDto top1Report
 ) {
     public static UserReportSummaryResponseDto fromEntity(UserReport userReport) {
@@ -29,6 +30,7 @@ public record UserReportSummaryResponseDto(
                 userReport.getId(),
                 createdAt.getMonthValue(),
                 createdAt.get(WeekFields.of(Locale.getDefault()).weekOfMonth()),
+                createdAt,
                 ReportDto.fromEntity(report)
         );
     }
