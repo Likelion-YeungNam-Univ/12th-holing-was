@@ -5,7 +5,13 @@ import com.example.holing.bounded_context.auth.dto.OAuthUserInfoDto;
 import com.example.holing.bounded_context.auth.dto.SignInRequestDto;
 import com.example.holing.bounded_context.mission.entity.MissionResult;
 import com.example.holing.bounded_context.schedule.entity.Schedule;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,6 +59,9 @@ public class User extends BaseTimeEntity implements UserDetails {
     @Column(nullable = false)
     private Long socialId;
 
+    @Column(nullable = false)
+    private Boolean isChanged;
+
     @OneToOne
     private User mate;
 
@@ -69,6 +78,7 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.isPeriod = (gender == Gender.FEMALE) ? isPeriod : false;
         this.point = 0;
         this.socialId = socialId;
+        this.isChanged = false;
     }
 
     public static User of(OAuthUserInfoDto dto, SignInRequestDto request) {
@@ -136,6 +146,10 @@ public class User extends BaseTimeEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void setIsChanged(boolean state) {
+        this.isChanged = state;
     }
 
 }

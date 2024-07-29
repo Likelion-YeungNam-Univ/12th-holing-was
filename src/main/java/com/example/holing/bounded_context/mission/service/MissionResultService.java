@@ -64,6 +64,7 @@ public class MissionResultService {
     public List<MissionResultResponseDto> read(Long userId, LocalDate date) {
         User user = userService.read(userId);
 
+        user.setIsChanged(false);
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
 
@@ -105,6 +106,7 @@ public class MissionResultService {
             // 임시로 발급한 미션이 기존의 생성된 미션이랑 일치하지 않는 경우 업데이트 후 break
             if (tempMission != prevMission) {
                 missionResult.setMission(tempMission);
+                user.setIsChanged(true);
                 break;
             }
         }
@@ -167,23 +169,12 @@ public class MissionResultService {
 
     // 미션 교체 여부 확인 (미션 교체 되었다면 true, 교체된적 없다면 false)
     public boolean checkUpdated(User user) {
-        List<MissionResult> missionResults = user.getMissionResults();
-        missionResults.sort((mr1, mr2) -> mr2.getCreatedAt().compareTo(mr1.getCreatedAt()));
-
         if (!checkCreated(user)) {
             throw new GlobalException(MissionExceptionCode.UPDATED_DENIED);
         }
 
-        for (int i = 0; i < 3; i++) {
-            MissionResult checkMissionResult = missionResults.get(i);
-
-            // 완료된 미션의 경우 넘어
-            if (checkMissionResult.isCompleted() == true) continue;
-
-            // 생성 시간과 수정 시간이 다르다면 -> 미션 교체한 것
-            if (!checkMissionResult.getCreatedAt().isEqual(checkMissionResult.getModifiedAt())) {
-                return true;
-            }
+        if (user.getIsChanged() == true) {
+            return true;
         }
 
         return false;
