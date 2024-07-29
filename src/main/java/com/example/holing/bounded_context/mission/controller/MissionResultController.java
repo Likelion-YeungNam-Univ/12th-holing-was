@@ -2,9 +2,12 @@ package com.example.holing.bounded_context.mission.controller;
 
 import com.example.holing.base.jwt.JwtProvider;
 import com.example.holing.bounded_context.mission.api.MissionApi;
+import com.example.holing.bounded_context.mission.dto.MateCheckDto;
 import com.example.holing.bounded_context.mission.dto.MissionCountDto;
 import com.example.holing.bounded_context.mission.dto.MissionResultResponseDto;
 import com.example.holing.bounded_context.mission.service.MissionResultService;
+import com.example.holing.bounded_context.user.entity.User;
+import com.example.holing.bounded_context.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,15 +28,21 @@ public class MissionResultController implements MissionApi {
 
     private final JwtProvider jwtProvider;
     private final MissionResultService missionResultService;
+    private final UserService userService;
 
     /**
      * 매일 랜덤으로 미션 3개 생성하기 위한 Method
      *
      * @return List<Mission> 생성된 미션 3개
      */
-    public ResponseEntity<List<MissionResultResponseDto>> create(HttpServletRequest request) {
+    public ResponseEntity<?> create(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
+
+        User user = userService.read(Long.parseLong(userId));
+        if (user.getMate() == null) {
+            return ResponseEntity.ok().body(MateCheckDto.fromEntity(false));
+        }
 
         List<MissionResultResponseDto> missionResultList = missionResultService.create(Long.parseLong(userId));
 
@@ -46,9 +55,14 @@ public class MissionResultController implements MissionApi {
      * @param request
      * @return
      */
-    public ResponseEntity<List<MissionResultResponseDto>> read(HttpServletRequest request, @RequestParam String date) {
+    public ResponseEntity<?> read(HttpServletRequest request, @RequestParam String date) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
+
+        User user = userService.read(Long.parseLong(userId));
+        if (user.getMate() == null) {
+            return ResponseEntity.ok().body(MateCheckDto.fromEntity(false));
+        }
 
         LocalDate selectedDate = LocalDate.parse(date);
 
