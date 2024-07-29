@@ -1,9 +1,9 @@
 package com.example.holing.bounded_context.report.api;
 
-import com.example.holing.bounded_context.report.dto.ReportDetailResponseDto;
 import com.example.holing.bounded_context.report.dto.ReportRequestDto;
-import com.example.holing.bounded_context.report.dto.ReportScoreResponseDto;
-import com.example.holing.bounded_context.report.dto.ReportSummaryResponseDto;
+import com.example.holing.bounded_context.report.dto.UserReportDetailResponseDto;
+import com.example.holing.bounded_context.report.dto.UserReportScoreResponseDto;
+import com.example.holing.bounded_context.report.dto.UserReportSummaryResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,32 +24,32 @@ public interface ReportApi {
             사용자가 본인의 리포트 점수들을 조회하기 위한 API 입니다
             리포트의 태그와 점수 목록을 반환합니다.
             """)
-    ResponseEntity<List<ReportScoreResponseDto>> score(HttpServletRequest request);
+    ResponseEntity<List<UserReportScoreResponseDto>> score(HttpServletRequest request);
 
     @GetMapping("/user/mate/reports/score")
     @Operation(summary = "짝꿍 리포트 점수 조회", description = """
             사용자가 짝꿍의 리포트 점수들을 조회하기 위한 API 입니다
             리포트의 태그와 점수 목록을 반환합니다.
             """)
-    public ResponseEntity<List<ReportScoreResponseDto>> mateScore(HttpServletRequest request);
+    public ResponseEntity<List<UserReportScoreResponseDto>> mateScore(HttpServletRequest request);
 
     @GetMapping("/user/me/reports/summary")
     @Operation(summary = "본인 리포트 요약 조회", description = """
             사용자가 본인의 리포트 요약들을 조회하기 위한 API 입니다
             테스트 결과 점수가 가장 높은 증상의 솔루션 제목을 반환합니다.
             """)
-    public ResponseEntity<List<ReportSummaryResponseDto>> summary(HttpServletRequest request);
+    public ResponseEntity<List<UserReportSummaryResponseDto>> summary(HttpServletRequest request);
 
     @GetMapping("/user/mate/reports/summary")
     @Operation(summary = "짝꿍 리포트 요약 조회", description = """
             사용자가 짝꿍의 리포트 요약들을 조회하기 위한 API 입니다
             테스트 결과 점수가 가장 높은 증상의 솔루션 제목을 반환합니다.
             """)
-    public ResponseEntity<List<ReportSummaryResponseDto>> mateSummary(HttpServletRequest request);
+    public ResponseEntity<List<UserReportSummaryResponseDto>> mateSummary(HttpServletRequest request);
 
     @GetMapping("/reports/{reportId}")
     @Operation(summary = "리포트 상세 조회", description = "사용자가 리포트를 상세 조회하기 위한 API 입니다")
-    public ResponseEntity<ReportDetailResponseDto> read(HttpServletRequest request, @PathVariable Long reportId);
+    public ResponseEntity<UserReportDetailResponseDto> read(HttpServletRequest request, @PathVariable Long reportId);
 
     @PostMapping("/reports")
     @Operation(summary = "리포트 생성", description = """

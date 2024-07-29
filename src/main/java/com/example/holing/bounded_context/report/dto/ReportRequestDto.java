@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
+@Schema(description = "리포트 생성 요청 DTO")
 public record ReportRequestDto(
         @Min(1) @Max(6)
         @Schema(description = "태그 id(1에서 6사이의 값)", example = "1")

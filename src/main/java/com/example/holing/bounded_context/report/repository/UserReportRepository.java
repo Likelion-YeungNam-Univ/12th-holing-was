@@ -19,7 +19,6 @@ public interface UserReportRepository extends JpaRepository<UserReport, Long> {
      * @param user
      * @return
      */
-
     Optional<UserReport> findFirstByUserOrderByCreatedAtDesc(User user);
 
     /**
@@ -34,7 +33,7 @@ public interface UserReportRepository extends JpaRepository<UserReport, Long> {
             "join fetch r.solution " +
             "where ur.user = :user " +
             "order by ur.createdAt desc")
-    List<UserReport> findAllByUser(User user);
+    List<UserReport> findAllWithReportAndSolutionByUser(User user);
 
     /**
      * 특정 리포트를 조회하기 위한 쿼리<br>
