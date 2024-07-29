@@ -15,7 +15,7 @@ public record UserReportScoreResponseDto(
         int month,
         @Schema(description = "주차", example = "1")
         int weekOfMonth,
-        List<ReportDto> reportList
+        List<ReportScoreDto> reportList
 ) {
     public static UserReportScoreResponseDto fromEntity(UserReport userReport) {
         LocalDateTime createdAt = userReport.getCreatedAt();
@@ -23,18 +23,18 @@ public record UserReportScoreResponseDto(
                 createdAt.getMonthValue(),
                 createdAt.get(WeekFields.of(Locale.getDefault()).weekOfMonth()),
                 userReport.getReports().stream()
-                        .map(ReportDto::fromEntity).toList()
+                        .map(ReportScoreDto::fromEntity).toList()
         );
     }
 
-    public record ReportDto(
+    public record ReportScoreDto(
             @Schema(description = "점수", example = "5")
             int score,
             @Schema(description = "태그 이름", example = "SLEEP_PROBLEM")
             String tagName
     ) {
-        public static ReportDto fromEntity(Report report) {
-            return new ReportDto(
+        public static ReportScoreDto fromEntity(Report report) {
+            return new ReportScoreDto(
                     report.getScore(),
                     report.getTag().getName()
             );

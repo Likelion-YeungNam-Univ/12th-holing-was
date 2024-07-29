@@ -35,7 +35,7 @@ public record UserRecentReportResponseDto(
                 user.getNickname(),
                 user.getGender(),
                 user.getProfileImgUrl(),
-                user.getMate().getNickname(),
+                user.getMate() != null ? user.getMate().getNickname() : null,
                 ChronoUnit.DAYS.between(user.getCreatedAt().toLocalDate(), LocalDate.now()),
                 UserReportDto.fromEntity(userReport)
         );

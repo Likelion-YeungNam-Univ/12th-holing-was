@@ -6,7 +6,6 @@ import com.example.holing.bounded_context.survey.entity.Type;
 import com.example.holing.bounded_context.survey.repository.SelfQuestionRepository;
 import com.example.holing.bounded_context.survey.repository.SymptomQuestionRepository;
 import com.example.holing.bounded_context.user.entity.Gender;
-import com.example.holing.bounded_context.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +25,8 @@ public class SurveyService {
         return symptomQuestionRepository.findAllByTagNotPeriod();
     }
 
-    public List<SelfQuestion> readSelfByUser(User user) {
+    public List<SelfQuestion> readSelfByUser(Gender gender) {
         return selfQuestionRepository.findAllByTypeNot(
-                user.getGender() == Gender.MALE ? Type.FEMALE : Type.MALE);
+                gender == Gender.MALE ? Type.FEMALE : Type.MALE);
     }
 }
