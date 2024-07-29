@@ -11,7 +11,7 @@ public record MissionResultResponseDto(
         return new MissionResultResponseDto(
                 missionResult.getId(),
                 missionResult.isCompleted(),
-                MissionInfoDto.FromEntity(missionResult.getMission())
+                MissionInfoDto.fromEntity(missionResult.getMission())
         );
     }
 }

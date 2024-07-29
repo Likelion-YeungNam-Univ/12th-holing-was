@@ -10,7 +10,7 @@ public record MissionInfoDto(
 
         int reward
 ) {
-    public static MissionInfoDto FromEntity(Mission mission) {
+    public static MissionInfoDto fromEntity(Mission mission) {
         return new MissionInfoDto(
                 mission.getId(),
                 mission.getTitle(),
