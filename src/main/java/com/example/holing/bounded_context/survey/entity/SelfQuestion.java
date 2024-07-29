@@ -22,4 +22,17 @@ public class SelfQuestion {
 
     @Column(nullable = false)
     private String statement;
+
+    @Column(nullable = false)
+    private String choice1;
+
+    @Column(nullable = false)
+    private String choice2;
+
+    @Column(nullable = false)
+    private String choice3;
+
+    @Column(nullable = false)
+    private String imgUrl;
+
 }
