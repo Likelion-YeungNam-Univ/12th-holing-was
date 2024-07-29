@@ -5,6 +5,7 @@ import com.example.holing.bounded_context.survey.dto.SymptomQuestionResponseDto;
 import com.example.holing.bounded_context.survey.entity.SelfQuestion;
 import com.example.holing.bounded_context.survey.entity.SymptomQuestion;
 import com.example.holing.bounded_context.survey.service.SurveyService;
+import com.example.holing.bounded_context.user.entity.Gender;
 import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -41,12 +43,8 @@ public class SurveyController {
 
     @GetMapping("/self-test")
     @Operation(summary = "자가 테스트 문항 조회", description = "사용자가 자가 테스트의 문항을 조회하기 위한 API 입니다")
-    public ResponseEntity<List<SelfQuestion>> readSelfQuestion(HttpServletRequest request) {
-        String accessToken = jwtProvider.getToken(request);
-        String userId = jwtProvider.getUserId(accessToken);
-
-        User user = userService.read(Long.parseLong(userId));
-        List<SelfQuestion> symptomQuestions = surveyService.readSelfByUser(user);
+    public ResponseEntity<List<SelfQuestion>> readSelfQuestion(@RequestParam Gender gender) {
+        List<SelfQuestion> symptomQuestions = surveyService.readSelfByUser(gender);
         return ResponseEntity.ok().body(symptomQuestions);
     }
 }
