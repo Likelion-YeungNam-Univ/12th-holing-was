@@ -45,7 +45,7 @@ public interface AuthApi {
                                     """)
                     }))
     })
-    ResponseEntity<UserInfoResponseDto> signIn(@RequestBody SignInRequestDto request);
+    ResponseEntity<UserInfoResponseDto> signIn(@RequestBody SignInRequestDto request, @RequestParam("code") String code);
 
     @DeleteMapping("/withdrawal")
     @Operation(summary = "회원 탈퇴[임시]", description = "사용자가 서비스와 연결을 끊고 회원을 탈퇴하기 위한 API 입니다.")

@@ -69,8 +69,10 @@ public class AuthController implements AuthApi {
      * @throws HttpClientErrorException 사용자 정보 받기 api 요청 실패 시 발생합니다.
      */
     @Override
-    public ResponseEntity<UserInfoResponseDto> signIn(@RequestBody SignInRequestDto request) {
-        OAuthUserInfoDto userInfo = oAuthService.getUserInfo(request.accessToken());
+    public ResponseEntity<UserInfoResponseDto> signIn(@RequestBody SignInRequestDto request, @RequestParam("code") String code) {
+        OAuthTokenInfoDto token = oAuthService.getToken(code);
+        OAuthUserInfoDto userInfo = oAuthService.getUserInfo(token.accessToken());
+        
         User user = userService.saveOrUpdate(User.of(userInfo, request));
 
         String accessToken = jwtProvider.generatorAccessToken(user.getEmail(), user.getId());
