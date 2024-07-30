@@ -51,13 +51,23 @@ public interface MissionApi {
     @Operation(summary = "미션 교체", description = "선택한 미션을 동일한 태그내의 다른 미션으로 교체합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "미션 교체 성공"),
-            @ApiResponse(responseCode = "404", description = "미션 교체 실패",
+            @ApiResponse(responseCode = "400", description = "미션 교체 실패",
                     content = @Content(mediaType = "application/json", examples = {
                             @ExampleObject(value = """
                                                                                 {
-                                                                                    "timeStamp": "2024-07-26T17:30:09.9259602",
-                                                                                    "name": "UPDATED_DENIED",
-                                                                                    "cause": "날짜가 지난 미션은 교체할 수 없습니다."
+                                                                                    "timeStamp": "2024-07-30T22:51:29.3950973",
+                                                                                    "name": "ACCESS_DENIED",
+                                                                                    "cause": "이미 지난 미션입니다."
+                                                                                }
+                                    """),
+                    })),
+            @ApiResponse(responseCode = "400", description = "최신 미션이 존재하지 않음",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                                                                {
+                                                                                    "timeStamp": "2024-07-30T22:51:29.3950973",
+                                                                                    "name": "NOT_EXIST_MISSION",
+                                                                                    "cause": "미션이 존재하지 않습니다."
                                                                                 }
                                     """),
                     })),
@@ -65,9 +75,19 @@ public interface MissionApi {
                     content = @Content(mediaType = "application/json", examples = {
                             @ExampleObject(value = """
                                                                                 {
-                                                                                    "timeStamp": "2024-07-26T17:32:09.4239562",
+                                                                                    "timeStamp": "2024-07-30T22:52:02.7411103",
                                                                                     "name": "ALREADY_UPDATED",
                                                                                     "cause": "이미 미션을 교체하셨습니다."
+                                                                                }
+                                    """),
+                    })),
+            @ApiResponse(responseCode = "400", description = "완료된 미션에 대해 교체 요청",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                                                                {
+                                                                                    "timeStamp": "2024-07-30T22:52:24.7846393",
+                                                                                    "name": "ALREADY_COMPLETED",
+                                                                                    "cause": "이미 완료된 미션입니다."
                                                                                 }
                                     """),
                     }))
@@ -82,9 +102,19 @@ public interface MissionApi {
                     content = @Content(mediaType = "application/json", examples = {
                             @ExampleObject(value = """
                                                                                 {
-                                                                                    "timeStamp": "2024-07-26T17:32:09.4239562",
+                                                                                    "timeStamp": "2024-07-30T22:52:24.7846393",
                                                                                     "name": "ALREADY_COMPLETED",
                                                                                     "cause": "이미 완료된 미션입니다."
+                                                                                }
+                                    """),
+                    })),
+            @ApiResponse(responseCode = "400", description = "과거 미션 완료 요청",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                                                                {
+                                                                                    "timeStamp": "2024-07-30T22:52:51.3695759",
+                                                                                    "name": "ACCESS_DENIED",
+                                                                                    "cause": "이미 지난 미션입니다."
                                                                                 }
                                     """),
                     }))
