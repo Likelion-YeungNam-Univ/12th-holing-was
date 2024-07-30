@@ -24,8 +24,8 @@ public record UserInfoResponseDto(
         int point,
         @Schema(description = "소셜 ID", example = "1234567890")
         Long socialId,
-        @Schema(description = "짝꿍 ID", example = "2")
-        Long mateId
+        @Schema(description = "짝꿍 닉네임", example = "mateNickname")
+        String mateNickname
 ) {
     public static UserInfoResponseDto fromEntity(User user) {
         return new UserInfoResponseDto(
@@ -38,7 +38,7 @@ public record UserInfoResponseDto(
                 user.getPoint(),
                 user.getSocialId(),
                 Optional.ofNullable(user.getMate())
-                        .map(User::getId)
+                        .map(User::getNickname)
                         .orElse(null)
         );
     }

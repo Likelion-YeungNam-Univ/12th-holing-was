@@ -1,5 +1,6 @@
 package com.example.holing.bounded_context.user.controller;
 
+import com.example.holing.base.exception.GlobalException;
 import com.example.holing.base.jwt.JwtProvider;
 import com.example.holing.bounded_context.report.entity.UserReport;
 import com.example.holing.bounded_context.report.service.UserReportService;
@@ -7,12 +8,15 @@ import com.example.holing.bounded_context.user.api.UserApi;
 import com.example.holing.bounded_context.user.dto.UserInfoResponseDto;
 import com.example.holing.bounded_context.user.dto.UserRecentReportResponseDto;
 import com.example.holing.bounded_context.user.entity.User;
+import com.example.holing.bounded_context.user.exception.UserExceptionCode;
 import com.example.holing.bounded_context.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,7 +39,7 @@ public class UserController implements UserApi {
 
         User user = userService.read(Long.parseLong(userId));
 
-        UserReport report = userReportService.readRecentByUser(user);
+        Optional<UserReport> report = userReportService.readRecentByUser(user);
         UserRecentReportResponseDto response = UserRecentReportResponseDto.of(user, report);
         return ResponseEntity.ok().body(response);
     }
@@ -46,8 +50,9 @@ public class UserController implements UserApi {
         String userId = jwtProvider.getUserId(accessToken);
 
         User user = userService.read(Long.parseLong(userId));
+        if (user.getMate() == null) throw new GlobalException(UserExceptionCode.MATE_NOT_FOUND);
 
-        UserReport mateReport = userReportService.readRecentByUser(user.getMate());
+        Optional<UserReport> mateReport = userReportService.readRecentByUser(user.getMate());
         UserRecentReportResponseDto response = UserRecentReportResponseDto.of(user.getMate(), mateReport);
         return ResponseEntity.ok().body(response);
     }
