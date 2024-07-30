@@ -61,4 +61,4 @@ jobs:
             docker rm holing-was-container
             docker image prune -af
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/holing-was
-            docker run -d -p 8080:8080 --name holing-was-container ${{ secrets.DOCKERHUB_USERNAME }}/holing-was
+            docker run -d -p 8080:8080 --name holing-was-container -e TZ=Asia/Seoul ${{ secrets.DOCKERHUB_USERNAME }}/holing-was
