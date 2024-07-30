@@ -5,6 +5,10 @@ import com.example.holing.bounded_context.report.dto.UserReportDetailResponseDto
 import com.example.holing.bounded_context.report.dto.UserReportScoreResponseDto;
 import com.example.holing.bounded_context.report.dto.UserReportSummaryResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -48,7 +52,30 @@ public interface ReportApi {
     public ResponseEntity<List<UserReportSummaryResponseDto>> mateSummary(HttpServletRequest request);
 
     @GetMapping("/reports/{reportId}")
-    @Operation(summary = "리포트 상세 조회", description = "사용자가 리포트를 상세 조회하기 위한 API 입니다")
+    @Operation(summary = "증상 테스트 결과 상세 조회", description = "사용자가 증상 테스트 결과를 상세 조회하기 위한 API 입니다")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "증상 테스트 결과 상세 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "증상 테스트 기록이 존재하지 않는 경우",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                                                                {
+                                                                                    "timestamp": "2024-07-19T17:56:39.188+00:00",
+                                                                                    "name": "TEST_HISTORY_NOT_FOUND_BY_ID",
+                                                                                    "cause": "해당 증상 테스트 기록이 존재하지 않습니다."
+                                                                                }
+                                    """),
+                    })),
+            @ApiResponse(responseCode = "403", description = "증상 테스트 기록에 접근할 수 없는 경우",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                                                                {
+                                                                                    "timestamp": "2024-07-19T17:56:39.188+00:00",
+                                                                                    "name": "ACCESS_DENIED_TO_TEST_HISTORY",
+                                                                                    "cause": "해당 증상 테스트 기록에 접근 권한이 없습니다."
+                                                                                }
+                                    """),
+                    }))
+    })
     public ResponseEntity<UserReportDetailResponseDto> read(HttpServletRequest request, @PathVariable Long reportId);
 
     @PostMapping("/reports")

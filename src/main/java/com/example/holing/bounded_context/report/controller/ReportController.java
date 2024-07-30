@@ -86,7 +86,7 @@ public class ReportController implements ReportApi {
 
         User user = userService.read(Long.parseLong(userId));
 
-        UserReport userReport = userReportService.readWithReportAndSolutionById(reportId);
+        UserReport userReport = userReportService.read(user, reportId);
         UserReportDetailResponseDto response = UserReportDetailResponseDto.fromEntity(userReport);
         return ResponseEntity.ok().body(response);
     }

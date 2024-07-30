@@ -1,7 +1,9 @@
 package com.example.holing.bounded_context.report.service;
 
+import com.example.holing.base.exception.GlobalException;
 import com.example.holing.bounded_context.report.entity.Report;
 import com.example.holing.bounded_context.report.entity.UserReport;
+import com.example.holing.bounded_context.report.exception.ReportExceptionCode;
 import com.example.holing.bounded_context.report.repository.UserReportRepository;
 import com.example.holing.bounded_context.survey.entity.Tag;
 import com.example.holing.bounded_context.survey.repository.TagRepository;
@@ -24,12 +26,12 @@ public class UserReportService {
 
     public UserReport readWithReportAndSolutionById(Long id) {
         return userReportRepository.findWithReportAndSolutionById(id)
-                .orElseThrow(() -> new IllegalArgumentException("사용자 리포트를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GlobalException(ReportExceptionCode.TEST_HISTORY_NOT_FOUND_BY_ID));
     }
 
     public UserReport readRecentByUser(User user) {
         return userReportRepository.findFirstByUserOrderByCreatedAtDesc(user)
-                .orElseThrow(() -> new IllegalArgumentException("최신 사용자 리포트를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GlobalException(ReportExceptionCode.TEST_HISTORY_NOT_FOUNT_BY_USER));
     }
 
     public List<UserReport> readAllWithReportByUser(User user) {
@@ -38,6 +40,12 @@ public class UserReportService {
 
     public List<UserReport> readAllByUser(User user) {
         return userReportRepository.findAllWithReportAndSolutionByUser(user);
+    }
+
+    public UserReport read(User user, Long id) {
+        UserReport userReport = readWithReportAndSolutionById(id);
+        if (user != userReport.getUser()) throw new GlobalException(ReportExceptionCode.ACCESS_DENIED_TO_TEST_HISTORY);
+        return userReport;
     }
 
     public List<Tag> getUserRecentReportTag(User user) {
