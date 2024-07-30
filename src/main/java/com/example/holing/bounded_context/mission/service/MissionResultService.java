@@ -43,6 +43,8 @@ public class MissionResultService {
             throw new GlobalException(MissionExceptionCode.ALREADY_EXISTS);
         }
 
+        user.setIsChanged(false);
+        
         List<Mission> missions = missionService.getMissions(userId);
         List<MissionResult> todayMission = new ArrayList<>();
 
@@ -60,18 +62,14 @@ public class MissionResultService {
                 .collect(toList());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<MissionResultResponseDto> read(Long userId, LocalDate date) {
         User user = userService.read(userId);
 
-        user.setIsChanged(false);
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
 
         List<MissionResult> todayMission = missionResultRepository.findAllByUserIdAndCreatedAtBetween(userId, startOfDay, endOfDay);
-//        List<MissionResult> todayMission = user.getMissionResults().stream()
-//                .filter(mr -> mr.getCreatedAt().toLocalDate().equals(LocalDateTime.now().toLocalDate()))
-//                .toList();
 
         return todayMission.stream()
                 .map(MissionResultResponseDto::fromEntity)
@@ -90,20 +88,26 @@ public class MissionResultService {
         MissionResult missionResult = user.getMissionResults().stream()
                 .filter(mr -> mr.getId().equals(missionResultId)).findFirst().get();
 
-        // 동일한 태그(주요 증상)명의 미션 개수를 확인
+        // 지난 날짜의 미션에 대한 요청
+        if (missionResult.getCreatedAt().getDayOfMonth() != LocalDateTime.now().getDayOfMonth()) {
+            throw new GlobalException(MissionExceptionCode.ACCESS_DENIED);
+        }
+
+        // 이미 완료된 미션에 대한 요청
+        if (missionResult.isCompleted() == true) {
+            throw new GlobalException(MissionExceptionCode.ALREADY_COMPLETED);
+        }
+
         Mission prevMission = missionResult.getMission();
 
         List<Mission> newMissionList = missionRepository.findAllByTag(prevMission.getTag());
 
-        // 난수 생성을 위한 Random 객체 선언
         Random random = new Random();
 
-        // 난수 생성 후 미션 다시 받기 → 중복된 경우 한번더 진행
         while (true) {
             int temp = random.nextInt(newMissionList.size());
             Mission tempMission = newMissionList.get(temp);
 
-            // 임시로 발급한 미션이 기존의 생성된 미션이랑 일치하지 않는 경우 업데이트 후 break
             if (tempMission != prevMission) {
                 missionResult.setMission(tempMission);
                 user.setIsChanged(true);
@@ -121,6 +125,10 @@ public class MissionResultService {
 
         if (missionResult.isCompleted() == true) {
             throw new GlobalException(MissionExceptionCode.ALREADY_COMPLETED);
+        }
+
+        if (missionResult.getCreatedAt().getDayOfMonth() != LocalDateTime.now().getDayOfMonth()) {
+            throw new GlobalException(MissionExceptionCode.ACCESS_DENIED);
         }
 
         missionResult.updateState(true);
@@ -170,7 +178,7 @@ public class MissionResultService {
     // 미션 교체 여부 확인 (미션 교체 되었다면 true, 교체된적 없다면 false)
     public boolean checkUpdated(User user) {
         if (!checkCreated(user)) {
-            throw new GlobalException(MissionExceptionCode.UPDATED_DENIED);
+            throw new GlobalException(MissionExceptionCode.NOT_EXIST_MISSION);
         }
 
         if (user.getIsChanged() == true) {
