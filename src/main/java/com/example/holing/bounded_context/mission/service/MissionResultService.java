@@ -44,7 +44,7 @@ public class MissionResultService {
         }
 
         user.setIsChanged(false);
-        
+
         List<Mission> missions = missionService.getMissions(userId);
         List<MissionResult> todayMission = new ArrayList<>();
 
@@ -62,7 +62,7 @@ public class MissionResultService {
                 .collect(toList());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<MissionResultResponseDto> read(Long userId, LocalDate date) {
         User user = userService.read(userId);
 
