@@ -24,32 +24,29 @@ public class UserReportService {
     private final UserReportRepository userReportRepository;
     private final TagRepository tagRepository;
 
-    public UserReport readWithReportAndSolutionById(Long id) {
-        return userReportRepository.findWithReportAndSolutionById(id)
+    public Optional<UserReport> readRecentByUser(User user) {
+        return userReportRepository.findFirstByUserOrderByCreatedAtDesc(user);
+    }
+
+    public List<UserReport> readScore(Long userId) {
+        return userReportRepository.findAllWithReportByUser(userId);
+    }
+
+    public List<UserReport> readSummary(Long userId) {
+        return userReportRepository.findAllWithReportAndSolutionByUser(userId);
+    }
+
+    public UserReport readDetail(User user, Long id) {
+        UserReport userReport = userReportRepository.findWithReportAndSolutionById(id)
                 .orElseThrow(() -> new GlobalException(ReportExceptionCode.TEST_HISTORY_NOT_FOUND_BY_ID));
-    }
 
-    public UserReport readRecentByUser(User user) {
-        return userReportRepository.findFirstByUserOrderByCreatedAtDesc(user)
-                .orElseThrow(() -> new GlobalException(ReportExceptionCode.TEST_HISTORY_NOT_FOUNT_BY_USER));
-    }
-
-    public List<UserReport> readAllWithReportByUser(User user) {
-        return userReportRepository.findAllWithReportByUser(user);
-    }
-
-    public List<UserReport> readAllByUser(User user) {
-        return userReportRepository.findAllWithReportAndSolutionByUser(user);
-    }
-
-    public UserReport read(User user, Long id) {
-        UserReport userReport = readWithReportAndSolutionById(id);
         if (user != userReport.getUser()) throw new GlobalException(ReportExceptionCode.ACCESS_DENIED_TO_TEST_HISTORY);
+
         return userReport;
     }
 
     public List<Tag> getUserRecentReportTag(User user) {
-        List<UserReport> userReports = readAllWithReportByUser(user);
+        List<UserReport> userReports = readScore(user.getId());
         List<Report> reports = userReports.get(userReports.size() - 1).getReports();
 
         List<Tag> tags = reports.stream()
@@ -63,7 +60,7 @@ public class UserReportService {
 
     @Transactional
     public UserReport create(User user) {
-        if (!isWeekInterval(user)) throw new IllegalArgumentException("일주일이 지나지 않았습니다.");
+        if (!isWeekInterval(user)) throw new GlobalException(ReportExceptionCode.USER_REPORT_PERIOD_NOT_MET);
 
         UserReport userReport = UserReport.builder()
                 .user(user)

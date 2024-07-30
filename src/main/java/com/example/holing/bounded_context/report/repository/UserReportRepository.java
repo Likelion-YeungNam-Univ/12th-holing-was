@@ -31,9 +31,9 @@ public interface UserReportRepository extends JpaRepository<UserReport, Long> {
     @Query("select ur from UserReport ur " +
             "join fetch ur.reports r " +
             "join fetch r.solution " +
-            "where ur.user = :user " +
+            "where ur.user.id = :userId " +
             "order by ur.createdAt desc")
-    List<UserReport> findAllWithReportAndSolutionByUser(User user);
+    List<UserReport> findAllWithReportAndSolutionByUser(Long userId);
 
     /**
      * 특정 리포트를 조회하기 위한 쿼리<br>
@@ -57,8 +57,8 @@ public interface UserReportRepository extends JpaRepository<UserReport, Long> {
      */
     @Query("select ur from UserReport ur " +
             "join fetch ur.reports r " +
-            "where ur.user = :user " +
+            "where ur.user.id = :userId " +
             "order by ur.createdAt asc"
     )
-    List<UserReport> findAllWithReportByUser(User user);
+    List<UserReport> findAllWithReportByUser(Long userId);
 }
