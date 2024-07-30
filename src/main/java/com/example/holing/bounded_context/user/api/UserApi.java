@@ -20,13 +20,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface UserApi {
 
     @GetMapping("/me/reports")
-    @Operation(summary = "본인 정보 및 리포트 조회", description = "사용자가 본인의 정보와 리포트를 조회하기 위한 API 입니다")
+    @Operation(summary = "본인 정보 및 최신 리포트 조회", description = "사용자가 본인의 정보와 리포트를 조회하기 위한 API 입니다")
+    @ApiResponse(responseCode = "200", description = "본인 정보 및 최신 리포트 조회 성공")
     ResponseEntity<UserRecentReportResponseDto> readWithReport(HttpServletRequest request);
 
     @GetMapping("/mate/reports")
-    @Operation(summary = "짝꿍 정보 및 리포트 조회", description = "사용자가 짝꿍의 정보와 리포트를 조회하기 위한 API 입니다")
+    @Operation(summary = "짝꿍 정보 및 최신 리포트 조회", description = "사용자가 짝꿍의 정보와 리포트를 조회하기 위한 API 입니다")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "증상 테스트 기록 요약 조회 성공"),
+            @ApiResponse(responseCode = "200", description = "짝꿍 정보 및 최신 리포트 조회 성공"),
             @ApiResponse(responseCode = "404", description = "짝꿍이 존재하지 않는 경우",
                     content = @Content(mediaType = "application/json", examples = {
                             @ExampleObject(value = """
@@ -67,9 +68,9 @@ public interface UserApi {
 //    ResponseEntity<UserInfoDto> read(@PathVariable Long userId);
 
     @PatchMapping("/connect/{socialId}")
-    @Operation(summary = "짝꿍 연결", description = "사용자가 대상 사용자와 짝궁으로 연결하기 위한 API 입니다")
+    @Operation(summary = "짝꿍 연결", description = "사용자가 대상 사용자와 짝꿍으로 연결하기 위한 API 입니다")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "짝궁 연결 성공"),
+            @ApiResponse(responseCode = "200", description = "짝꿍 연결 성공"),
             @ApiResponse(responseCode = "404", description = "사용자 또는 대상 사용자를 조회할 수 없는 경우",
                     content = @Content(mediaType = "application/json", examples = {
                             @ExampleObject(name = "USER_NOT_FOUND", value = """

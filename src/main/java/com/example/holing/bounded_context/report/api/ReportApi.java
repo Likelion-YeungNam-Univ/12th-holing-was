@@ -29,6 +29,7 @@ public interface ReportApi {
             각 테스트 기록의 모든 점수들이 반환됩니다.
             기록이 없는 경우 빈 객체가 반환됩니다.
             """)
+    @ApiResponse(responseCode = "200", description = "본인 증상 테스트 기록 점수 조회 성공")
     ResponseEntity<List<UserReportScoreResponseDto>> score(HttpServletRequest request);
 
     @GetMapping("/user/mate/reports/score")
@@ -38,7 +39,7 @@ public interface ReportApi {
             기록이 없는 경우 빈 객체가 반환됩니다.
             """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "증상 테스트 기록 점수 조회 성공"),
+            @ApiResponse(responseCode = "200", description = "짝꿍 증상 테스트 기록 점수 조회 성공"),
             @ApiResponse(responseCode = "404", description = "짝꿍이 존재하지 않는 경우",
                     content = @Content(mediaType = "application/json", examples = {
                             @ExampleObject(value = """
@@ -58,6 +59,7 @@ public interface ReportApi {
             각 테스트 기록에서 가장 점수가 높은 솔루션의 제목이 반환됩니다.
             기록이 없는 경우 빈 객체가 반환됩니다.
             """)
+    @ApiResponse(responseCode = "200", description = "본인 증상 테스트 기록 요약 조회 성공")
     ResponseEntity<List<UserReportSummaryResponseDto>> summary(HttpServletRequest request);
 
     @GetMapping("/user/mate/reports/summary")
@@ -67,7 +69,7 @@ public interface ReportApi {
             기록이 없는 경우 빈 객체가 반환됩니다.
             """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "증상 테스트 기록 요약 조회 성공"),
+            @ApiResponse(responseCode = "200", description = "짝꿍 증상 테스트 기록 요약 조회 성공"),
             @ApiResponse(responseCode = "404", description = "짝꿍이 존재하지 않는 경우",
                     content = @Content(mediaType = "application/json", examples = {
                             @ExampleObject(value = """
