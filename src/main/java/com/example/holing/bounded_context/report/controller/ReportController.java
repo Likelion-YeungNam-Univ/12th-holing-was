@@ -1,5 +1,6 @@
 package com.example.holing.bounded_context.report.controller;
 
+import com.example.holing.base.exception.GlobalException;
 import com.example.holing.base.jwt.JwtProvider;
 import com.example.holing.bounded_context.report.api.ReportApi;
 import com.example.holing.bounded_context.report.dto.ReportRequestDto;
@@ -11,6 +12,7 @@ import com.example.holing.bounded_context.report.entity.UserReport;
 import com.example.holing.bounded_context.report.service.ReportService;
 import com.example.holing.bounded_context.report.service.UserReportService;
 import com.example.holing.bounded_context.user.entity.User;
+import com.example.holing.bounded_context.user.exception.UserExceptionCode;
 import com.example.holing.bounded_context.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -38,9 +40,7 @@ public class ReportController implements ReportApi {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
-        User user = userService.read(Long.parseLong(userId));
-
-        List<UserReport> reports = userReportService.readAllWithReportByUser(user);
+        List<UserReport> reports = userReportService.readScore(Long.parseLong(userId));
         List<UserReportScoreResponseDto> response = reports.stream().map(UserReportScoreResponseDto::fromEntity).toList();
         return ResponseEntity.ok().body(response);
     }
@@ -50,9 +50,9 @@ public class ReportController implements ReportApi {
         String userId = jwtProvider.getUserId(accessToken);
 
         User user = userService.read(Long.parseLong(userId));
-        User mate = userService.read(user.getMate().getId());
+        if (user.getMate() == null) throw new GlobalException(UserExceptionCode.MATE_NOT_FOUND);
 
-        List<UserReport> reports = userReportService.readAllWithReportByUser(mate);
+        List<UserReport> reports = userReportService.readScore(user.getMate().getId());
         List<UserReportScoreResponseDto> response = reports.stream().map(UserReportScoreResponseDto::fromEntity).toList();
         return ResponseEntity.ok().body(response);
     }
@@ -61,9 +61,7 @@ public class ReportController implements ReportApi {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
-        User user = userService.read(Long.parseLong(userId));
-
-        List<UserReportSummaryResponseDto> response = userReportService.readAllByUser(user).stream()
+        List<UserReportSummaryResponseDto> response = userReportService.readSummary(Long.parseLong(userId)).stream()
                 .map(UserReportSummaryResponseDto::fromEntity).toList();
         return ResponseEntity.ok().body(response);
     }
@@ -73,9 +71,9 @@ public class ReportController implements ReportApi {
         String userId = jwtProvider.getUserId(accessToken);
 
         User user = userService.read(Long.parseLong(userId));
-        User mate = userService.read(user.getMate().getId());
+        if (user.getMate() == null) throw new GlobalException(UserExceptionCode.MATE_NOT_FOUND);
 
-        List<UserReportSummaryResponseDto> response = userReportService.readAllByUser(mate).stream()
+        List<UserReportSummaryResponseDto> response = userReportService.readSummary(user.getMate().getId()).stream()
                 .map(UserReportSummaryResponseDto::fromEntity).toList();
         return ResponseEntity.ok().body(response);
     }
@@ -86,7 +84,7 @@ public class ReportController implements ReportApi {
 
         User user = userService.read(Long.parseLong(userId));
 
-        UserReport userReport = userReportService.readWithReportAndSolutionById(reportId);
+        UserReport userReport = userReportService.readDetail(user, reportId);
         UserReportDetailResponseDto response = UserReportDetailResponseDto.fromEntity(userReport);
         return ResponseEntity.ok().body(response);
     }

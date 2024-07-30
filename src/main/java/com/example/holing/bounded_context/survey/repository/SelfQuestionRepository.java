@@ -2,10 +2,10 @@ package com.example.holing.bounded_context.survey.repository;
 
 import com.example.holing.bounded_context.survey.entity.SelfQuestion;
 import com.example.holing.bounded_context.survey.entity.Type;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface SelfQuestionRepository extends JpaRepository<SelfQuestion, Long> {
@@ -15,5 +15,5 @@ public interface SelfQuestionRepository extends JpaRepository<SelfQuestion, Long
      *
      * @return
      */
-    List<SelfQuestion> findAllByTypeNot(Type type);
+    Page<SelfQuestion> findAllByTypeNot(Type type, Pageable pageable);
 }

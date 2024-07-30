@@ -7,6 +7,8 @@ import com.example.holing.bounded_context.survey.repository.SelfQuestionReposito
 import com.example.holing.bounded_context.survey.repository.SymptomQuestionRepository;
 import com.example.holing.bounded_context.user.entity.Gender;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,8 +27,9 @@ public class SurveyService {
         return symptomQuestionRepository.findAllByTagNotPeriod();
     }
 
-    public List<SelfQuestion> readSelfByUser(Gender gender) {
+    public Page<SelfQuestion> readSelfByUser(Gender gender, Pageable pageable) {
         return selfQuestionRepository.findAllByTypeNot(
-                gender == Gender.MALE ? Type.FEMALE : Type.MALE);
+                gender == Gender.MALE ? Type.FEMALE : Type.MALE,
+                pageable);
     }
 }

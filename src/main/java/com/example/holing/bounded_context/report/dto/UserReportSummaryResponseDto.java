@@ -12,7 +12,7 @@ import java.util.Locale;
 @Schema(description = "사용자 리포트 요약 응답 DTO")
 public record UserReportSummaryResponseDto(
         @Schema(description = "사용자 리포트 id", example = "1")
-        Long id,
+        Long reportId,
         @Schema(description = "월", example = "7")
         int month,
         @Schema(description = "주차", example = "1")
