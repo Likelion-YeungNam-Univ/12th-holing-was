@@ -12,6 +12,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,8 +46,9 @@ public class SurveyController {
 
     @GetMapping("/self-test")
     @Operation(summary = "자가 테스트 문항 조회", description = "사용자가 자가 테스트의 문항을 조회하기 위한 API 입니다")
-    public ResponseEntity<List<SelfQuestion>> readSelfQuestion(@RequestParam Gender gender) {
-        List<SelfQuestion> symptomQuestions = surveyService.readSelfByUser(gender);
-        return ResponseEntity.ok().body(symptomQuestions);
+    public ResponseEntity<Page<SelfQuestion>> readSelfQuestion(@RequestParam Gender gender,
+                                                               @PageableDefault(page = 0, size = 1) Pageable pageable) {
+        Page<SelfQuestion> response = surveyService.readSelfByUser(gender, pageable);
+        return ResponseEntity.ok().body(response);
     }
 }
