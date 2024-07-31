@@ -2,16 +2,15 @@ package com.example.holing.bounded_context.auth.controller;
 
 import com.example.holing.base.jwt.JwtProvider;
 import com.example.holing.bounded_context.auth.api.AuthApi;
+import com.example.holing.bounded_context.auth.dto.AccessTokenResponseDto;
 import com.example.holing.bounded_context.auth.dto.OAuthTokenInfoDto;
 import com.example.holing.bounded_context.auth.dto.OAuthUserInfoDto;
 import com.example.holing.bounded_context.auth.dto.SignInRequestDto;
 import com.example.holing.bounded_context.auth.service.OAuthService;
-import com.example.holing.bounded_context.user.dto.UserInfoResponseDto;
 import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,18 +68,16 @@ public class AuthController implements AuthApi {
      * @throws HttpClientErrorException 사용자 정보 받기 api 요청 실패 시 발생합니다.
      */
     @Override
-    public ResponseEntity<UserInfoResponseDto> signIn(@RequestBody SignInRequestDto request, @RequestParam("code") String code) {
+    public ResponseEntity<AccessTokenResponseDto> signIn(@RequestBody SignInRequestDto request, @RequestParam("code") String code) {
         OAuthTokenInfoDto token = oAuthService.getToken(code);
         OAuthUserInfoDto userInfo = oAuthService.getUserInfo(token.accessToken());
 
         User user = userService.saveOrUpdate(User.of(userInfo, request));
 
         String accessToken = jwtProvider.generatorAccessToken(user.getEmail(), user.getId());
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(accessToken);
 
-        UserInfoResponseDto response = UserInfoResponseDto.fromEntity(user);
-        return ResponseEntity.ok().headers(headers).body(response);
+        AccessTokenResponseDto response = AccessTokenResponseDto.of(accessToken);
+        return ResponseEntity.ok().body(response);
     }
 
     /**
