@@ -23,7 +23,7 @@ public record UserReportScoreResponseDto(
         List<ReportScoreDto> list = userReport.getReports().stream()
                 .map(ReportScoreDto::fromEntity)
                 .collect(Collectors.toList());
-        if (list.size() == 5) list.add(new ReportScoreDto(0, "PERIOD"));
+        if (list.size() == 5) list.add(new ReportScoreDto(null, "PERIOD"));
 
         return new UserReportScoreResponseDto(
                 createdAt.getMonthValue(),
@@ -34,7 +34,7 @@ public record UserReportScoreResponseDto(
 
     public record ReportScoreDto(
             @Schema(description = "점수", example = "5")
-            int score,
+            Integer score,
             @Schema(description = "태그 이름", example = "SLEEP_PROBLEM")
             String tagName
     ) {
