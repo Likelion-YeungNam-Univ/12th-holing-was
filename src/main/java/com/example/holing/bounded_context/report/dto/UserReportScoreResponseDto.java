@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.WeekFields;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Schema(description = "사용자 리포트 점수 응답 DTO")
 public record UserReportScoreResponseDto(
@@ -19,17 +20,21 @@ public record UserReportScoreResponseDto(
 ) {
     public static UserReportScoreResponseDto fromEntity(UserReport userReport) {
         LocalDateTime createdAt = userReport.getCreatedAt();
+        List<ReportScoreDto> list = userReport.getReports().stream()
+                .map(ReportScoreDto::fromEntity)
+                .collect(Collectors.toList());
+        if (list.size() == 5) list.add(new ReportScoreDto(null, "PERIOD"));
+
         return new UserReportScoreResponseDto(
                 createdAt.getMonthValue(),
                 createdAt.get(WeekFields.of(Locale.getDefault()).weekOfMonth()),
-                userReport.getReports().stream()
-                        .map(ReportScoreDto::fromEntity).toList()
+                list
         );
     }
 
     public record ReportScoreDto(
             @Schema(description = "점수", example = "5")
-            int score,
+            Integer score,
             @Schema(description = "태그 이름", example = "SLEEP_PROBLEM")
             String tagName
     ) {
