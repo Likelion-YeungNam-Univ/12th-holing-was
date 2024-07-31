@@ -1,5 +1,6 @@
 package com.example.holing.bounded_context.user.api;
 
+import com.example.holing.bounded_context.user.dto.UserExchangeRequestDto;
 import com.example.holing.bounded_context.user.dto.UserInfoResponseDto;
 import com.example.holing.bounded_context.user.dto.UserRecentReportResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("/user")
@@ -131,4 +134,21 @@ public interface UserApi {
                     })),
     })
     ResponseEntity<String> disconnectMate(HttpServletRequest request);
+
+    @PostMapping("/product/exchanges")
+    @Operation(summary = "상품 교환", description = "사용자가 마이페이지에서 상품을 교환하기 위한 API 입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상품 교환 성공"),
+            @ApiResponse(responseCode = "400", description = "사용자의 포인트가 상품의 포인트보다 부족한 경우 발생합니다.",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(name = "LACK_OF_POINT", value = """
+                                                                                {
+                                                                                    "timeStamp": "2024-07-31T22:04:33.1247853",
+                                                                                    "name": "LACK_OF_POINT",
+                                                                                    "cause": "포인트가 부족합니다."
+                                                                                }
+                                    """)
+                    })),
+    })
+    ResponseEntity<UserInfoResponseDto> exchange(HttpServletRequest request, @RequestBody UserExchangeRequestDto userExchangeRequestDto);
 }

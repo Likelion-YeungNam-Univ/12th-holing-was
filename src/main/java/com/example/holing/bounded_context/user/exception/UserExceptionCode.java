@@ -9,7 +9,9 @@ public enum UserExceptionCode implements ExceptionCode {
     TARGET_NOT_FOUND(HttpStatus.NOT_FOUND, "대상자를 찾을 수 없습니다."),
     MATE_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자의 짝꿍을 찾을 수 없습니다."),
     USER_MATE_EXISTS(HttpStatus.CONFLICT, "사용자의 짝꿍이 이미 존재합니다."),
-    TARGET_MATE_EXISTS(HttpStatus.CONFLICT, "대상자의 짝꿍이 이미 존재합니다.");
+    TARGET_MATE_EXISTS(HttpStatus.CONFLICT, "대상자의 짝꿍이 이미 존재합니다."),
+    LACK_OF_POINT(HttpStatus.BAD_REQUEST, "포인트가 부족합니다.");
+
 
     HttpStatus httpStatus;
     String cause;

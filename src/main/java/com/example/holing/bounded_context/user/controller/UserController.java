@@ -5,6 +5,7 @@ import com.example.holing.base.jwt.JwtProvider;
 import com.example.holing.bounded_context.report.entity.UserReport;
 import com.example.holing.bounded_context.report.service.UserReportService;
 import com.example.holing.bounded_context.user.api.UserApi;
+import com.example.holing.bounded_context.user.dto.UserExchangeRequestDto;
 import com.example.holing.bounded_context.user.dto.UserInfoResponseDto;
 import com.example.holing.bounded_context.user.dto.UserRecentReportResponseDto;
 import com.example.holing.bounded_context.user.entity.User;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
@@ -98,6 +100,15 @@ public class UserController implements UserApi {
         userService.disconnectMate(Long.parseLong(acceptUserId));
 
         return ResponseEntity.ok().body("짝꿍 해제에 성공했습니다.");
+    }
+
+    public ResponseEntity<UserInfoResponseDto> exchange(HttpServletRequest request, @RequestBody UserExchangeRequestDto userExchangeRequestDto) {
+        String accessToken = jwtProvider.getToken(request);
+        String userId = jwtProvider.getUserId(accessToken);
+
+        return ResponseEntity.ok().body(
+                UserInfoResponseDto.fromEntity(userService.exchange(Long.parseLong(userId), userExchangeRequestDto))
+        );
     }
 
 }

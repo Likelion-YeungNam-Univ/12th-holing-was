@@ -1,6 +1,7 @@
 package com.example.holing.bounded_context.user.service;
 
 import com.example.holing.base.exception.GlobalException;
+import com.example.holing.bounded_context.user.dto.UserExchangeRequestDto;
 import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.exception.UserExceptionCode;
 import com.example.holing.bounded_context.user.repository.UserRepository;
@@ -60,5 +61,19 @@ public class UserService {
     @Transactional
     public void delete(User user) {
         userRepository.delete(user);
+    }
+
+    @Transactional
+    public User exchange(Long userId, UserExchangeRequestDto userExchangeRequestDto) {
+        User user = read(userId);
+
+        int productPrice = userExchangeRequestDto.getProductPrice();
+        if (user.getPoint() < productPrice) {
+            throw new GlobalException(UserExceptionCode.LACK_OF_POINT);
+        } else {
+            user.addPoint(-productPrice);
+        }
+
+        return user;
     }
 }
