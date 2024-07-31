@@ -9,6 +9,9 @@ import com.example.holing.bounded_context.survey.entity.Tag;
 import com.example.holing.bounded_context.survey.repository.TagRepository;
 import com.example.holing.bounded_context.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +36,8 @@ public class UserReportService {
     }
 
     public List<UserReport> readSummary(Long userId) {
-        return userReportRepository.findAllWithReportAndSolutionByUser(userId);
+        Pageable pageable = PageRequest.of(0, 4, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return userReportRepository.findTop4WithReportAndSolutionByUser(userId, pageable);
     }
 
     public UserReport readDetail(User user, Long id) {
