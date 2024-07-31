@@ -25,7 +25,7 @@ public class ReportService {
 
     @Transactional
     public List<Report> create(User user, List<ReportRequestDto> dto) {
-        if (!validateReportByPeriod(user, dto)) throw new IllegalArgumentException("알맞은 검사가 아닙니다.");
+//        if (!validateReportByPeriod(user, dto)) throw new IllegalArgumentException("알맞은 검사가 아닙니다.");
         UserReport userReport = userReportService.create(user);
 
         List<Tag> tagList = tagRepository.findAllWithSolution();
@@ -43,18 +43,18 @@ public class ReportService {
                             .filter(solution -> solution.getMinScore() <= reportRequestDto.score())
                             .min((s1, s2) -> s2.getMinScore() - s1.getMinScore())
                             .get())
-                    .additional(reportRequestDto.additional().isEmpty() ? null : reportRequestDto.additional())
+                    .additional(reportRequestDto.additional() == null ? null : reportRequestDto.additional())
                     .build();
 
             return reportRepository.save(report);
         }).toList();
     }
 
-    public Boolean validateReportByPeriod(User user, List<ReportRequestDto> reportRequestDtos) {
-        ReportRequestDto reportRequestDto = reportRequestDtos.get(5);
-        if (user.getIsPeriod()) {
-            return reportRequestDto.score() != 0;
-        }
-        return reportRequestDto.score() == 0;
-    }
+//    public Boolean validateReportByPeriod(User user, List<ReportRequestDto> reportRequestDtos) {
+//        ReportRequestDto reportRequestDto = reportRequestDtos.get(5);
+//        if (user.getIsPeriod()) {
+//            return reportRequestDto.score() != 0;
+//        }
+//        return reportRequestDto.score() == 0;
+//    }
 }
