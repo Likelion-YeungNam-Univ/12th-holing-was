@@ -15,8 +15,6 @@ import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.exception.UserExceptionCode;
 import com.example.holing.bounded_context.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -89,7 +87,7 @@ public class ReportController implements ReportApi {
         return ResponseEntity.ok().body(response);
     }
 
-    public ResponseEntity<String> create(HttpServletRequest request, @RequestBody @Valid @Size(min = 6, max = 6) List<ReportRequestDto> reportRequestDtos) {
+    public ResponseEntity<String> create(HttpServletRequest request, @RequestBody List<ReportRequestDto> reportRequestDtos) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
