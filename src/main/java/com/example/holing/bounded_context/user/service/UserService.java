@@ -76,4 +76,12 @@ public class UserService {
 
         return user;
     }
+
+    @Transactional
+    public User completeSelfTest(Long userId) {
+        User user = read(userId);
+        user.setIsSelfTested(true);
+
+        return user;
+    }
 }

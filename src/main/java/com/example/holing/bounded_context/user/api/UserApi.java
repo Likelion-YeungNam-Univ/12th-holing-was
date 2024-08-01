@@ -151,4 +151,9 @@ public interface UserApi {
                     })),
     })
     ResponseEntity<UserInfoResponseDto> exchange(HttpServletRequest request, @RequestBody UserExchangeRequestDto userExchangeRequestDto);
+
+    @PatchMapping("/self-test")
+    @Operation(summary = "유저 자가 테스트 완료 처리", description = "로그인 한 사용자의 자가 진단 테스트 유무를 완료 처리하는 API 입니다.")
+    @ApiResponse(responseCode = "200", description = "자가 진단 테스트 완료")
+    ResponseEntity<UserInfoResponseDto> completeSelfTest(HttpServletRequest request);
 }
