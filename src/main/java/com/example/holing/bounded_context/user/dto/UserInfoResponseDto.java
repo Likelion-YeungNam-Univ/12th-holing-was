@@ -25,7 +25,9 @@ public record UserInfoResponseDto(
         @Schema(description = "소셜 ID", example = "1234567890")
         Long socialId,
         @Schema(description = "짝꿍 닉네임", example = "mateNickname")
-        String mateNickname
+        String mateNickname,
+        @Schema(description = "자가 진단 테스트 유무", example = "true")
+        boolean isSelfTested
 ) {
     public static UserInfoResponseDto fromEntity(User user) {
         return new UserInfoResponseDto(
@@ -39,7 +41,8 @@ public record UserInfoResponseDto(
                 user.getSocialId(),
                 Optional.ofNullable(user.getMate())
                         .map(User::getNickname)
-                        .orElse(null)
+                        .orElse(null),
+                user.getIsSelfTested()
         );
     }
 }

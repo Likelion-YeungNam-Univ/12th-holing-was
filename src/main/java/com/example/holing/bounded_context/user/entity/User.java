@@ -62,6 +62,9 @@ public class User extends BaseTimeEntity implements UserDetails {
     @Column(nullable = false)
     private Boolean isChanged;
 
+    @Column(nullable = false)
+    private Boolean isSelfTested;
+
     @OneToOne
     private User mate;
 
@@ -79,6 +82,7 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.point = 0;
         this.socialId = socialId;
         this.isChanged = false;
+        this.isSelfTested = false;
     }
 
     public static User of(OAuthUserInfoDto dto, SignInRequestDto request) {
@@ -150,6 +154,10 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     public void setIsChanged(boolean state) {
         this.isChanged = state;
+    }
+
+    public void setIsSelfTested(boolean isSelfTested) {
+        this.isSelfTested = isSelfTested;
     }
 
 }

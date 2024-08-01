@@ -111,4 +111,12 @@ public class UserController implements UserApi {
         );
     }
 
+    public ResponseEntity<UserInfoResponseDto> completeSelfTest(HttpServletRequest request) {
+        String accessToken = jwtProvider.getToken(request);
+        String userId = jwtProvider.getUserId(accessToken);
+
+        return ResponseEntity.ok().body(
+                UserInfoResponseDto.fromEntity(userService.completeSelfTest(Long.parseLong(userId)))
+        );
+    }
 }
