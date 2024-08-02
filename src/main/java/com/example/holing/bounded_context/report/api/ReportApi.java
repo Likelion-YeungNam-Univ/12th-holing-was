@@ -45,26 +45,25 @@ public interface ReportApi {
             각 테스트 기록의 모든 점수들이 반환됩니다.
             기록이 없는 경우 빈 객체가 반환됩니다.
             """)
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "짝꿍 증상 테스트 기록 점수 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "짝꿍 또는 짝꿍의 증상 테스트 기록이 존재하지 않는 경우",
-                    content = @Content(mediaType = "application/json", examples = {
-                            @ExampleObject(name = "MATE_NOT_FOUND", value = """
-                                                                                {
-                                                                                    "timestamp": "2024-07-19T17:56:39.188+00:00",
-                                                                                    "name": "MATE_NOT_FOUND",
-                                                                                    "cause": "사용자의 짝꿍을 찾을 수 없습니다."
-                                                                                }
-                                    """),
-                            @ExampleObject(name = "TEST_HISTORY_NOT_FOUND_BY_USER", value = """
-                                                                                {
-                                                                                    "timestamp": "2024-07-19T17:56:39.188+00:00",
-                                                                                    "name": "TEST_HISTORY_NOT_FOUND_BY_USER",
-                                                                                    "cause": "해당 유저의 증상 테스트 기록이 존재하지 않습니다."
-                                                                                }
-                                    """)
-                    }))
-    })
+    @ApiResponse(responseCode = "200", description = "짝꿍 증상 테스트 기록 점수 조회 성공")
+    @ApiResponse(responseCode = "404", description = "짝꿍이 존재하지 않는 경우",
+            content = @Content(mediaType = "application/json", examples = {
+                    @ExampleObject(name = "MATE_NOT_FOUND", value = """
+                                                                        {
+                                                                            "timestamp": "2024-07-19T17:56:39.188+00:00",
+                                                                            "name": "MATE_NOT_FOUND",
+                                                                            "cause": "사용자의 짝꿍을 찾을 수 없습니다."
+                                                                        }
+                            """)}))
+    @ApiResponse(responseCode = "400", description = "짝꿍의 증상 테스트 기록이 존재하지 않는 경우",
+            content = @Content(mediaType = "application/json", examples = {
+                    @ExampleObject(name = "TEST_HISTORY_NOT_FOUND_BY_USER", value = """
+                                                                        {
+                                                                            "timestamp": "2024-07-19T17:56:39.188+00:00",
+                                                                            "name": "TEST_HISTORY_NOT_FOUND_BY_USER",
+                                                                            "cause": "해당 유저의 증상 테스트 기록이 존재하지 않습니다."
+                                                                        }
+                            """)}))
     ResponseEntity<List<UserReportScoreResponseDto>> mateScore(HttpServletRequest request);
 
     @GetMapping("/user/me/reports/summary")
@@ -91,55 +90,52 @@ public interface ReportApi {
             각 테스트 기록에서 가장 점수가 높은 솔루션의 제목이 반환됩니다.
             기록이 없는 경우 빈 객체가 반환됩니다.
             """)
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "짝꿍 증상 테스트 기록 요약 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "짝꿍 또는 짝꿍의 증상 테스트 기록이 존재하지 않는 경우",
-                    content = @Content(mediaType = "application/json", examples = {
-                            @ExampleObject(name = "MATE_NOT_FOUND", value = """
-                                                                                {
-                                                                                    "timestamp": "2024-07-19T17:56:39.188+00:00",
-                                                                                    "name": "MATE_NOT_FOUND",
-                                                                                    "cause": "사용자의 짝꿍을 찾을 수 없습니다."
-                                                                                }
-                                    """),
-                            @ExampleObject(name = "TEST_HISTORY_NOT_FOUND_BY_USER", value = """
-                                                                                {
-                                                                                    "timestamp": "2024-07-19T17:56:39.188+00:00",
-                                                                                    "name": "TEST_HISTORY_NOT_FOUND_BY_USER",
-                                                                                    "cause": "해당 유저의 증상 테스트 기록이 존재하지 않습니다."
-                                                                                }
-                                    """),
-                    }))
-    })
+    @ApiResponse(responseCode = "200", description = "짝꿍 증상 테스트 기록 요약 조회 성공")
+    @ApiResponse(responseCode = "404", description = "짝꿍이 존재하지 않는 경우",
+            content = @Content(mediaType = "application/json", examples = {
+                    @ExampleObject(name = "MATE_NOT_FOUND", value = """
+                                                                        {
+                                                                            "timestamp": "2024-07-19T17:56:39.188+00:00",
+                                                                            "name": "MATE_NOT_FOUND",
+                                                                            "cause": "사용자의 짝꿍을 찾을 수 없습니다."
+                                                                        }
+                            """)}))
+    @ApiResponse(responseCode = "400", description = "짝꿍의 증상 테스트 기록이 존재하지 않는 경우",
+            content = @Content(mediaType = "application/json", examples = {
+                    @ExampleObject(name = "TEST_HISTORY_NOT_FOUND_BY_USER", value = """
+                                                                        {
+                                                                            "timestamp": "2024-07-19T17:56:39.188+00:00",
+                                                                            "name": "TEST_HISTORY_NOT_FOUND_BY_USER",
+                                                                            "cause": "해당 유저의 증상 테스트 기록이 존재하지 않습니다."
+                                                                        }
+                            """)}))
     ResponseEntity<List<UserReportSummaryResponseDto>> mateSummary(HttpServletRequest request);
 
     @GetMapping("/reports/{reportId}")
     @Operation(summary = "증상 테스트 기록 상세 조회", description = """
             사용자가 증상 테스트 기록을 상세 조회하기 위한 API 입니다
             """)
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "증상 테스트 기록 상세 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "증상 테스트 기록이 존재하지 않는 경우",
-                    content = @Content(mediaType = "application/json", examples = {
-                            @ExampleObject(value = """
-                                                                                {
-                                                                                    "timestamp": "2024-07-19T17:56:39.188+00:00",
-                                                                                    "name": "TEST_HISTORY_NOT_FOUND_BY_ID",
-                                                                                    "cause": "해당 증상 테스트 기록이 존재하지 않습니다."
-                                                                                }
-                                    """),
-                    })),
-            @ApiResponse(responseCode = "403", description = "증상 테스트 기록에 접근할 수 없는 경우",
-                    content = @Content(mediaType = "application/json", examples = {
-                            @ExampleObject(value = """
-                                                                                {
-                                                                                    "timestamp": "2024-07-19T17:56:39.188+00:00",
-                                                                                    "name": "ACCESS_DENIED_TO_TEST_HISTORY",
-                                                                                    "cause": "해당 증상 테스트 기록에 접근 권한이 없습니다."
-                                                                                }
-                                    """),
-                    }))
-    })
+    @ApiResponse(responseCode = "200", description = "증상 테스트 기록 상세 조회 성공")
+    @ApiResponse(responseCode = "404", description = "증상 테스트 기록이 존재하지 않는 경우",
+            content = @Content(mediaType = "application/json", examples = {
+                    @ExampleObject(value = """
+                                                                        {
+                                                                            "timestamp": "2024-07-19T17:56:39.188+00:00",
+                                                                            "name": "TEST_HISTORY_NOT_FOUND_BY_ID",
+                                                                            "cause": "해당 증상 테스트 기록이 존재하지 않습니다."
+                                                                        }
+                            """),
+            }))
+    @ApiResponse(responseCode = "403", description = "증상 테스트 기록에 접근할 수 없는 경우",
+            content = @Content(mediaType = "application/json", examples = {
+                    @ExampleObject(value = """
+                                                                        {
+                                                                            "timestamp": "2024-07-19T17:56:39.188+00:00",
+                                                                            "name": "ACCESS_DENIED_TO_TEST_HISTORY",
+                                                                            "cause": "해당 증상 테스트 기록에 접근 권한이 없습니다."
+                                                                        }
+                            """),
+            }))
     ResponseEntity<UserReportDetailResponseDto> read(HttpServletRequest request, @PathVariable Long reportId);
 
     @PostMapping("/reports")
