@@ -40,7 +40,7 @@ public class MedicineController implements MedicineApi {
         return ResponseEntity.ok().body("약이 성공적으로 생성되었습니다.");
     }
 
-    public ResponseEntity<?> read(HttpServletRequest request) {
+    public ResponseEntity<List<MedicineResponseDto>> read(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
