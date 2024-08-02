@@ -39,7 +39,8 @@ public class ReportController implements ReportApi {
         String userId = jwtProvider.getUserId(accessToken);
 
         List<UserReport> reports = userReportService.readScore(Long.parseLong(userId));
-        List<UserReportScoreResponseDto> response = reports.stream().map(UserReportScoreResponseDto::fromEntity).toList();
+        List<UserReportScoreResponseDto> response = reports.stream()
+                .map(UserReportScoreResponseDto::fromEntity).toList();
         return ResponseEntity.ok().body(response);
     }
 
@@ -51,7 +52,8 @@ public class ReportController implements ReportApi {
         if (user.getMate() == null) throw new GlobalException(UserExceptionCode.MATE_NOT_FOUND);
 
         List<UserReport> reports = userReportService.readScore(user.getMate().getId());
-        List<UserReportScoreResponseDto> response = reports.stream().map(UserReportScoreResponseDto::fromEntity).toList();
+        List<UserReportScoreResponseDto> response = reports.stream()
+                .map(UserReportScoreResponseDto::fromEntity).toList();
         return ResponseEntity.ok().body(response);
     }
 
@@ -59,7 +61,8 @@ public class ReportController implements ReportApi {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
-        List<UserReportSummaryResponseDto> response = userReportService.readSummary(Long.parseLong(userId)).stream()
+        List<UserReport> reports = userReportService.readSummary(Long.parseLong(userId));
+        List<UserReportSummaryResponseDto> response = reports.stream()
                 .map(UserReportSummaryResponseDto::fromEntity).toList();
         return ResponseEntity.ok().body(response);
     }
@@ -71,7 +74,8 @@ public class ReportController implements ReportApi {
         User user = userService.read(Long.parseLong(userId));
         if (user.getMate() == null) throw new GlobalException(UserExceptionCode.MATE_NOT_FOUND);
 
-        List<UserReportSummaryResponseDto> response = userReportService.readSummary(user.getMate().getId()).stream()
+        List<UserReport> reports = userReportService.readSummary(user.getMate().getId());
+        List<UserReportSummaryResponseDto> response = reports.stream()
                 .map(UserReportSummaryResponseDto::fromEntity).toList();
         return ResponseEntity.ok().body(response);
     }
