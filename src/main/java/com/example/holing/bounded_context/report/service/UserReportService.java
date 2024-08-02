@@ -32,12 +32,19 @@ public class UserReportService {
     }
 
     public List<UserReport> readScore(Long userId) {
-        return userReportRepository.findAllWithReportByUser(userId);
+        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdAt"));
+        List<UserReport> allWithReportByUser = userReportRepository.findAllWithReportByUser(userId, pageable);
+        if (allWithReportByUser.isEmpty())
+            throw new GlobalException(ReportExceptionCode.TEST_HISTORY_NOT_FOUND_BY_USER);
+        return allWithReportByUser;
     }
 
     public List<UserReport> readSummary(Long userId) {
         Pageable pageable = PageRequest.of(0, 4, Sort.by(Sort.Direction.DESC, "createdAt"));
-        return userReportRepository.findTop4WithReportAndSolutionByUser(userId, pageable);
+        List<UserReport> top4WithReportAndSolutionByUser = userReportRepository.findTop4WithReportAndSolutionByUser(userId, pageable);
+        if (top4WithReportAndSolutionByUser.isEmpty())
+            throw new GlobalException(ReportExceptionCode.TEST_HISTORY_NOT_FOUND_BY_USER);
+        return top4WithReportAndSolutionByUser;
     }
 
     public UserReport readDetail(User user, Long id) {

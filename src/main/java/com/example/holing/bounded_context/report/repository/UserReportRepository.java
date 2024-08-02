@@ -57,8 +57,7 @@ public interface UserReportRepository extends JpaRepository<UserReport, Long> {
      */
     @Query("select ur from UserReport ur " +
             "join fetch ur.reports r " +
-            "where ur.user.id = :userId " +
-            "order by ur.createdAt asc"
+            "where ur.user.id = :userId "
     )
-    List<UserReport> findAllWithReportByUser(Long userId);
+    List<UserReport> findAllWithReportByUser(Long userId, Pageable pageable);
 }
