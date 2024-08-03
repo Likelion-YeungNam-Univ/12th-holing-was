@@ -1,6 +1,7 @@
 package com.example.holing.bounded_context.medicine.entity;
 
 import com.example.holing.bounded_context.user.entity.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -37,7 +38,7 @@ public class Medicine {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "medicine")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "medicine", cascade = CascadeType.REMOVE)
     private List<MedicineHistory> medicineHistoryList = new ArrayList<>();
 
     @Builder
