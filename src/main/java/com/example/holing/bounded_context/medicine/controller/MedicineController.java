@@ -37,7 +37,15 @@ public class MedicineController implements MedicineApi {
         User user = userService.read(Long.parseLong(userId));
 
         Medicine response = medicineService.create(user, MedicineRequestDto.toEntity(medicineRequestDto));
-        return ResponseEntity.ok().body("약이 성공적으로 생성되었습니다.");
+        return ResponseEntity.ok().body("영양제가 성공적으로 생성되었습니다.");
+    }
+
+    public ResponseEntity<String> delete(HttpServletRequest request, @PathVariable Long medicineId) {
+        String accessToken = jwtProvider.getToken(request);
+        String userId = jwtProvider.getUserId(accessToken);
+
+        Medicine response = medicineService.delete(Long.parseLong(userId), medicineId);
+        return ResponseEntity.ok().body("영양제가 성공적으로 삭제되었습니다.");
     }
 
     public ResponseEntity<List<MedicineResponseDto>> read(HttpServletRequest request) {
@@ -58,7 +66,7 @@ public class MedicineController implements MedicineApi {
         if (medicine.getUser().getId() != Long.parseLong(userId))
             throw new GlobalException(MedicineExceptionCode.ACCESS_DENIED_TO_MEDICINE);
         medicineHistoryService.taken(medicineId);
-        return ResponseEntity.ok("약 복용 기록이 저장되었습니다.");
+        return ResponseEntity.ok("영양제 복용 기록이 저장되었습니다.");
     }
 
     public ResponseEntity<String> skip(HttpServletRequest request, @PathVariable Long medicineId) {
@@ -69,6 +77,6 @@ public class MedicineController implements MedicineApi {
         if (medicine.getUser().getId() != Long.parseLong(userId))
             throw new GlobalException(MedicineExceptionCode.ACCESS_DENIED_TO_MEDICINE);
         medicineHistoryService.skip(medicineId);
-        return ResponseEntity.ok("약 복용 기록이 삭제되었습니다.");
+        return ResponseEntity.ok("영양제 복용 기록이 삭제되었습니다.");
     }
 }

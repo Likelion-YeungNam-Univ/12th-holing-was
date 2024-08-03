@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +22,15 @@ public class MedicineService {
     public Medicine create(User user, Medicine medicine) {
         medicine.setUser(user);
         return medicineRepository.save(medicine);
+    }
+
+    @Transactional
+    public Medicine delete(Long userId, Long medicineId) {
+        Medicine medicine = readById(medicineId);
+        if (!Objects.equals(medicine.getUser().getId(), userId))
+            throw new GlobalException(MedicineExceptionCode.ACCESS_DENIED_TO_MEDICINE);
+        medicineRepository.delete(medicine);
+        return medicine;
     }
 
     public List<Object[]> readAll(Long userId) {

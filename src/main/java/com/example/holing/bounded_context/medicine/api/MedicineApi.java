@@ -34,7 +34,33 @@ public interface MedicineApi {
     @ApiResponse(responseCode = "200", description = "영양제 목록 조회 성공")
     ResponseEntity<List<MedicineResponseDto>> read(HttpServletRequest request);
 
-    @PostMapping("/{medicineId}")
+    @DeleteMapping("/{medicineId}")
+    @Operation(summary = "영양제 삭제", description = "사용자가 영양제를 삭제하기 위한 API 입니다.")
+    @ApiResponse(responseCode = "200", description = "영양제 삭제 성공")
+    @ApiResponse(responseCode = "403", description = "해당 영양제의 작성자가 아닌 경우",
+            content = @Content(mediaType = "application/json", examples = {
+                    @ExampleObject(value = """
+                                                                        {
+                                                                            "timestamp": "2024-07-19T17:56:39.188+00:00",
+                                                                            "name": "ACCESS_DENIED_TO_MEDICINE",
+                                                                            "cause": "해당 영양제에 접근 권한이 없습니다."
+                                                                        }
+                            """),
+            }))
+    @ApiResponse(responseCode = "404", description = "영양제가 존재하지 않는 경우",
+            content = @Content(mediaType = "application/json", examples = {
+                    @ExampleObject(value = """
+                                                                        {
+                                                                            "timestamp": "2024-07-19T17:56:39.188+00:00",
+                                                                            "name": "MEDICINE_NOT_FOUND",
+                                                                            "cause": "해당 영양제가 존재하지 않습니다."
+                                                                        }
+                            """),
+            }))
+    ResponseEntity<String> delete(HttpServletRequest request, @PathVariable Long medicineId);
+
+
+    @PostMapping("/{medicineId}/history")
     @Operation(summary = "영양제 복용 기록 생성", description = "사용자가 영양제를 복용했다는 기록을 생성하기 위한 API 입니다.")
     @ApiResponse(responseCode = "200", description = "영양제 복용 기록 생성 성공")
     @ApiResponse(responseCode = "403", description = "해당 영양제의 작성자가 아닌 경우",
@@ -59,7 +85,7 @@ public interface MedicineApi {
             }))
     ResponseEntity<String> taken(HttpServletRequest request, @PathVariable Long medicineId);
 
-    @DeleteMapping("/{medicineId}")
+    @DeleteMapping("/{medicineId}/history")
     @Operation(summary = "영양제 복용 기록 삭제", description = "사용자가 영양제 복용으로 생성된 영양제 복용 기록을 삭제하기 위한 API 입니다.")
     @ApiResponse(responseCode = "200", description = "영양제 복용 기록 삭제 성공")
     @ApiResponse(responseCode = "403", description = "해당 영양제의 작성자가 아닌 경우",
