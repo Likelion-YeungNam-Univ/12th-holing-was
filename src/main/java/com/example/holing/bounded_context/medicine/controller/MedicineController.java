@@ -1,10 +1,12 @@
 package com.example.holing.bounded_context.medicine.controller;
 
+import com.example.holing.base.exception.GlobalException;
 import com.example.holing.base.jwt.JwtProvider;
 import com.example.holing.bounded_context.medicine.api.MedicineApi;
 import com.example.holing.bounded_context.medicine.dto.MedicineRequestDto;
 import com.example.holing.bounded_context.medicine.dto.MedicineResponseDto;
 import com.example.holing.bounded_context.medicine.entity.Medicine;
+import com.example.holing.bounded_context.medicine.exception.MedicineExceptionCode;
 import com.example.holing.bounded_context.medicine.serivce.MedicineHistoryService;
 import com.example.holing.bounded_context.medicine.serivce.MedicineService;
 import com.example.holing.bounded_context.user.entity.User;
@@ -38,14 +40,13 @@ public class MedicineController implements MedicineApi {
         return ResponseEntity.ok().body("약이 성공적으로 생성되었습니다.");
     }
 
-    public ResponseEntity<?> read(HttpServletRequest request) {
+    public ResponseEntity<List<MedicineResponseDto>> read(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
-        User user = userService.read(Long.parseLong(userId));
-
-        List<Medicine> medicines = medicineService.readAll(user);
-        List<MedicineResponseDto> response = medicines.stream().map(MedicineResponseDto::fromEntity).toList();
+        List<Object[]> medicines = medicineService.readAll(Long.parseLong(userId));
+        List<MedicineResponseDto> response = medicines.stream()
+                .map(MedicineResponseDto::fromEntity).toList();
         return ResponseEntity.ok().body(response);
     }
 
@@ -53,7 +54,9 @@ public class MedicineController implements MedicineApi {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
-        User user = userService.read(Long.parseLong(userId));
+        Medicine medicine = medicineService.readById(medicineId);
+        if (medicine.getUser().getId() != Long.parseLong(userId))
+            throw new GlobalException(MedicineExceptionCode.ACCESS_DENIED_TO_MEDICINE);
         medicineHistoryService.taken(medicineId);
         return ResponseEntity.ok("약 복용 기록이 저장되었습니다.");
     }
@@ -62,7 +65,9 @@ public class MedicineController implements MedicineApi {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
-        User user = userService.read(Long.parseLong(userId));
+        Medicine medicine = medicineService.readById(medicineId);
+        if (medicine.getUser().getId() != Long.parseLong(userId))
+            throw new GlobalException(MedicineExceptionCode.ACCESS_DENIED_TO_MEDICINE);
         medicineHistoryService.skip(medicineId);
         return ResponseEntity.ok("약 복용 기록이 삭제되었습니다.");
     }

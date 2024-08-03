@@ -6,7 +6,6 @@ import com.example.holing.bounded_context.medicine.repository.MedicineHistoryRep
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -26,9 +25,7 @@ public class MedicineHistoryService {
     }
 
     public Optional<MedicineHistory> check(Long medicineId) {
-        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
-        LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
-        return medicineHistoryRepository.findByMedicineAndCreatedAtToday(medicineId, startOfDay, endOfDay);
+        return medicineHistoryRepository.findByMedicineAndCreatedAtToday(medicineId);
     }
 
     public void taken(Long medicineId) {

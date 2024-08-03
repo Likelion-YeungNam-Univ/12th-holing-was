@@ -1,6 +1,8 @@
 package com.example.holing.bounded_context.medicine.serivce;
 
+import com.example.holing.base.exception.GlobalException;
 import com.example.holing.bounded_context.medicine.entity.Medicine;
+import com.example.holing.bounded_context.medicine.exception.MedicineExceptionCode;
 import com.example.holing.bounded_context.medicine.repository.MedicineRepository;
 import com.example.holing.bounded_context.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +23,12 @@ public class MedicineService {
         return medicineRepository.save(medicine);
     }
 
-    public List<Medicine> readAll(User user) {
-        return medicineRepository.findAllByUser(user);
+    public List<Object[]> readAll(Long userId) {
+        return medicineRepository.findAllByUserId(userId);
     }
-    
+
     public Medicine readById(Long medicineId) {
         return medicineRepository.findById(medicineId)
-                .orElseThrow(() -> new IllegalArgumentException("약이 존재하지 않습니다."));
+                .orElseThrow(() -> new GlobalException(MedicineExceptionCode.MEDICINE_NOT_FOUND));
     }
 }
