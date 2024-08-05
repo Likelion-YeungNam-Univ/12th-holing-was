@@ -2,10 +2,10 @@ package com.example.holing.bounded_context.auth.controller;
 
 import com.example.holing.base.jwt.JwtProvider;
 import com.example.holing.bounded_context.auth.api.AuthApi;
-import com.example.holing.bounded_context.auth.dto.AccessTokenResponseDto;
 import com.example.holing.bounded_context.auth.dto.OAuthTokenInfoDto;
 import com.example.holing.bounded_context.auth.dto.OAuthUserInfoDto;
 import com.example.holing.bounded_context.auth.dto.SignInRequestDto;
+import com.example.holing.bounded_context.auth.dto.SignInResponseDto;
 import com.example.holing.bounded_context.auth.service.OAuthService;
 import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.service.UserService;
@@ -68,7 +68,7 @@ public class AuthController implements AuthApi {
      * @throws HttpClientErrorException 사용자 정보 받기 api 요청 실패 시 발생합니다.
      */
     @Override
-    public ResponseEntity<AccessTokenResponseDto> signIn(@RequestBody SignInRequestDto request, @RequestParam("code") String code) {
+    public ResponseEntity<SignInResponseDto> signIn(@RequestBody SignInRequestDto request, @RequestParam("code") String code) {
         OAuthTokenInfoDto token = oAuthService.getToken(code);
         OAuthUserInfoDto userInfo = oAuthService.getUserInfo(token.accessToken());
 
@@ -76,7 +76,7 @@ public class AuthController implements AuthApi {
 
         String accessToken = jwtProvider.generatorAccessToken(user.getEmail(), user.getId());
 
-        AccessTokenResponseDto response = AccessTokenResponseDto.of(accessToken);
+        SignInResponseDto response = SignInResponseDto.of(accessToken, user.getSocialId());
         return ResponseEntity.ok().body(response);
     }
 

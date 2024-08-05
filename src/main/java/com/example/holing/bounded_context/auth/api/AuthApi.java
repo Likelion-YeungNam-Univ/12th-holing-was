@@ -1,7 +1,7 @@
 package com.example.holing.bounded_context.auth.api;
 
-import com.example.holing.bounded_context.auth.dto.AccessTokenResponseDto;
 import com.example.holing.bounded_context.auth.dto.SignInRequestDto;
+import com.example.holing.bounded_context.auth.dto.SignInResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -42,7 +42,7 @@ public interface AuthApi {
                                     """)
                     }))
     })
-    ResponseEntity<AccessTokenResponseDto> signIn(@RequestBody SignInRequestDto request, @RequestParam("code") String code);
+    ResponseEntity<SignInResponseDto> signIn(@RequestBody SignInRequestDto request, @RequestParam("code") String code);
 
     @DeleteMapping("/withdrawal")
     @Operation(summary = "회원 탈퇴[임시]", description = "사용자가 서비스와 연결을 끊고 회원을 탈퇴하기 위한 API 입니다.")
