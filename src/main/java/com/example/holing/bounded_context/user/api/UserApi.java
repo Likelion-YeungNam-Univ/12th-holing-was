@@ -10,6 +10,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -74,6 +77,16 @@ public interface UserApi {
     @Operation(summary = "짝꿍 연결", description = "사용자가 대상 사용자와 짝꿍으로 연결하기 위한 API 입니다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "짝꿍 연결 성공"),
+            @ApiResponse(responseCode = "400", description = "정상적인 코드가 아닌 경우 코드는 10자리 숫자",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                                                                {
+                                                                                    "timestamp": "2024-07-19T17:56:39.188+00:00",
+                                                                                    "name": "SYSTEM_ERROR",
+                                                                                    "cause": "400 BAD_REQUEST Validation failure"
+                                                                                }
+                                    """)
+                    })),
             @ApiResponse(responseCode = "404", description = "사용자 또는 대상 사용자를 조회할 수 없는 경우",
                     content = @Content(mediaType = "application/json", examples = {
                             @ExampleObject(name = "USER_NOT_FOUND", value = """
@@ -109,7 +122,7 @@ public interface UserApi {
                                     """),
                     }))
     })
-    ResponseEntity<String> connectMate(HttpServletRequest request, @PathVariable Long socialId);
+    ResponseEntity<String> connectMate(HttpServletRequest request, @Valid @NotNull @Pattern(regexp = "^\\d{10}$") @PathVariable String socialId);
 
     @PatchMapping("/disconnect")
     @Operation(summary = "짝꿍 해제", description = "사용자가 기존 짝궁과 연결을 해제하기 위한 API 입니다")

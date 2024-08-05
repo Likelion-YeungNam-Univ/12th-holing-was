@@ -12,6 +12,9 @@ import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.exception.UserExceptionCode;
 import com.example.holing.bounded_context.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -84,11 +87,11 @@ public class UserController implements UserApi {
 //        return ResponseEntity.ok().body(response);
 //    }
 
-    public ResponseEntity<String> connectMate(HttpServletRequest request, @PathVariable Long socialId) {
+    public ResponseEntity<String> connectMate(HttpServletRequest request, @Valid @NotNull @Pattern(regexp = "^\\d{10}$") @PathVariable String socialId) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
-        userService.connectMate(Long.parseLong(userId), socialId);
+        userService.connectMate(Long.parseLong(userId), Long.parseLong(socialId));
 
         return ResponseEntity.ok().body("짝꿍 연결에 성공했습니다.");
     }
