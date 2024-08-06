@@ -1,5 +1,7 @@
 package com.example.holing.base.config;
 
+import com.example.holing.base.jwt.JwtProvider;
+import com.example.holing.bounded_context.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -19,6 +22,8 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final AuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final UserService userService;
+    private final JwtProvider jwtProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -41,7 +46,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request ->
                         request.requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/survey/self-test").permitAll()
+                                .requestMatchers("/swagger-resources/**",
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**",
+                                        "/webjars/**",
+                                        "/error").permitAll()
                                 .anyRequest().authenticated())
+                .addFilterBefore(new JwtFilter(userService, jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(hp -> hp
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .formLogin(Customizer.withDefaults())
