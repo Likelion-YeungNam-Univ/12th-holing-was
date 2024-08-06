@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -17,6 +18,7 @@ import java.util.Collections;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private final AuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,7 +39,11 @@ public class SecurityConfig {
                 }))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(request ->
-                        request.anyRequest().permitAll())
+                        request.requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/survey/self-test").permitAll()
+                                .anyRequest().authenticated())
+                .exceptionHandling(hp -> hp
+                        .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .formLogin(Customizer.withDefaults())
                 .build();
     }

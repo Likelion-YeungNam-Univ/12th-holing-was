@@ -11,10 +11,13 @@ import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -26,6 +29,8 @@ public class AuthController implements AuthApi {
     private final OAuthService oAuthService;
     private final UserService userService;
     private final JwtProvider jwtProvider;
+    @Value("${webUrl}")
+    private String webUrl;
 
 //    /**
 //     * 인증 코드 받기 요청: 소셜 로그인으로 인가 코드를 받을 수 있는 링크로 리다이렉션 합니다.<br>
@@ -98,5 +103,10 @@ public class AuthController implements AuthApi {
         userService.delete(user);
 
         return ResponseEntity.ok().body("회원 탈퇴에 성공했습니다.");
+    }
+
+    @GetMapping("/login")
+    public @ResponseBody String login() {
+        return "<script>alert('로그인이 필요합니다.'); window.location='" + webUrl + "';</script>";
     }
 }
