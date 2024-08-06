@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 @RequiredArgsConstructor
@@ -106,7 +106,7 @@ public class AuthController implements AuthApi {
     }
 
     @GetMapping("/login")
-    public @ResponseBody String login() {
-        return "<script>alert('로그인이 필요합니다.'); window.location='" + webUrl + "';</script>";
+    public RedirectView login() {
+        return new RedirectView(webUrl);
     }
 }
