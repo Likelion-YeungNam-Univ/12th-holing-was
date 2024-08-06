@@ -44,17 +44,17 @@ public class SecurityConfig {
                 }))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers("/auth/**").permitAll()
-                                .requestMatchers("/survey/self-test").permitAll()
-                                .requestMatchers("/swagger-resources/**",
+                        request.requestMatchers("/auth/**",
+                                        "/survey/self-test",
+                                        "/swagger-resources/**",
                                         "/swagger-ui/**",
                                         "/v3/api-docs/**",
                                         "/webjars/**",
                                         "/error").permitAll()
                                 .anyRequest().authenticated())
                 .addFilterBefore(new JwtFilter(userService, jwtProvider), UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(hp -> hp
-                        .authenticationEntryPoint(customAuthenticationEntryPoint))
+//                .exceptionHandling(hp -> hp
+//                        .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .formLogin(Customizer.withDefaults())
                 .build();
     }
