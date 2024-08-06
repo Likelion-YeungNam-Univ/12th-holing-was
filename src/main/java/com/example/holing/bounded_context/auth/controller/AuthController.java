@@ -76,7 +76,7 @@ public class AuthController implements AuthApi {
 
         String accessToken = jwtProvider.generatorAccessToken(user.getEmail(), user.getId());
 
-        SignInResponseDto response = SignInResponseDto.of(accessToken, user.getSocialId());
+        SignInResponseDto response = SignInResponseDto.of(accessToken, user);
         return ResponseEntity.ok().body(response);
     }
 
